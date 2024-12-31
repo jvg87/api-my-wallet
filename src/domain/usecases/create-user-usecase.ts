@@ -11,10 +11,11 @@ export class CreateUserUseCase implements ICreateUser {
 
     const emailExists = await this.userRepository.checkByEmail(email);
 
-    if (emailExists) return null;
+    if (emailExists === true) return null;
 
     const salt = 12;
-    await this.hasher.hash(password, salt);
+
+    const hashedPassword = await this.hasher.hash(password, salt);
 
     return {
       id: "string",
