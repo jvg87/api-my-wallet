@@ -47,9 +47,23 @@ describe("CreateUser UseCase", () => {
     expect(emailExists).toBeFalsy();
   });
 
+  it("Should throw if hash throws", async () => {
+    jest
+      .spyOn(userRepositoryStub, "checkByEmail")
+      .mockRejectedValueOnce(new Error());
+    const promise = sut.execute(userParams);
+    await expect(promise).rejects.toThrow();
+  });
+
   it("Should call hash with correct password ", async () => {
     const hashSpy = jest.spyOn(hasherStub, "hash");
     await sut.execute(userParams);
     expect(hashSpy).toHaveBeenCalledWith(userParams.password, 12);
+  });
+
+  it("Should throw if hash throws", async () => {
+    jest.spyOn(hasherStub, "hash").mockRejectedValueOnce(new Error());
+    const promise = sut.execute(userParams);
+    await expect(promise).rejects.toThrow();
   });
 });
