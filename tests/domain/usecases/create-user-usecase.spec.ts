@@ -1,3 +1,4 @@
+import { UserParams } from "@/domain/entities";
 import { IHasher, IUserRepository } from "@/domain/protocols";
 import { CreateUserUseCase } from "@/domain/usecases";
 
@@ -9,7 +10,6 @@ import {
   it,
   jest,
 } from "@jest/globals";
-import { UserParams } from "../entities";
 
 describe("CreateUser UseCase", () => {
   const userParams: UserParams = {
@@ -19,6 +19,7 @@ describe("CreateUser UseCase", () => {
 
   const userRepositoryStub: jest.Mocked<IUserRepository> = {
     checkByEmail: jest.fn(),
+    create: jest.fn(),
   };
 
   const hasherStub: jest.Mocked<IHasher> = {
@@ -47,7 +48,7 @@ describe("CreateUser UseCase", () => {
     expect(emailExists).toBeFalsy();
   });
 
-  it("Should throw if hash throws", async () => {
+  it("Should throw if UserRepository.checkByEmail throws", async () => {
     jest
       .spyOn(userRepositoryStub, "checkByEmail")
       .mockRejectedValueOnce(new Error());
@@ -65,5 +66,11 @@ describe("CreateUser UseCase", () => {
     jest.spyOn(hasherStub, "hash").mockRejectedValueOnce(new Error());
     const promise = sut.execute(userParams);
     await expect(promise).rejects.toThrow();
+  });
+
+  it("Should call UserRepository.create with correct values ", async () => {
+    const checkByEmailSpy = jest.spyOn(userRepositoryStub, "create");
+    await sut.execute(userParams);
+    expect(checkByEmailSpy).toHaveBeenCalledWith(userParams);
   });
 });
