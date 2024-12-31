@@ -1,4 +1,4 @@
-import { IUserRepository } from "@/domain/protocols";
+import { IHasher, IUserRepository } from "@/domain/protocols";
 import { CreateUserUseCase } from "@/domain/usecases";
 
 import {
@@ -21,6 +21,10 @@ describe("CreateUser UseCase", () => {
     checkByEmail: jest.fn(),
   };
 
+  const hasherStub: jest.Mocked<IHasher> = {
+    hash: jest.fn(),
+  };
+
   let sut: CreateUserUseCase;
 
   beforeAll(() => {
@@ -28,7 +32,7 @@ describe("CreateUser UseCase", () => {
   });
 
   beforeEach(() => {
-    sut = new CreateUserUseCase(userRepositoryStub);
+    sut = new CreateUserUseCase(userRepositoryStub, hasherStub);
   });
 
   it("Should call UserRepository.checkByEmail with correct email ", async () => {
@@ -41,5 +45,11 @@ describe("CreateUser UseCase", () => {
     jest.spyOn(userRepositoryStub, "checkByEmail").mockResolvedValueOnce(true);
     const emailExists = await sut.execute(userParams);
     expect(emailExists).toBeFalsy();
+  });
+
+  it("Should call hash with correct password ", async () => {
+    const hashSpy = jest.spyOn(hasherStub, "hash");
+    await sut.execute(userParams);
+    expect(hashSpy).toHaveBeenCalledWith(userParams.password, 12);
   });
 });
