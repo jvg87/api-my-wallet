@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:verbose": "jest --passWithNoTests --verbose --runInBand",
-    "test:unit": "npm test -- --watch -c jest-unit.config.ts",
+    "test:unit": "npm test -- --collectCoverage=false --watch -c jest-unit.config.ts",
     "test:integration": "npm test -- --watch -c jest-integration.config.ts",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",

@@ -3,9 +3,11 @@ import { ICreateUser, IUserRepository } from "@/domain/protocols";
 
 export class CreateUserUseCase implements ICreateUser {
   constructor(private readonly userRepository: IUserRepository) {}
-  async execute(userParams: UserParams): Promise<User> {
+  async execute(userParams: UserParams): Promise<User | null> {
     const { email, password } = userParams;
-    await this.userRepository.checkByEmail(email);
+    const emailExists = await this.userRepository.checkByEmail(email);
+
+    if (emailExists) return null;
 
     return {
       id: "string",
