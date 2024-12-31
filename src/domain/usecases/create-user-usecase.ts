@@ -17,6 +17,8 @@ export class CreateUserUseCase implements ICreateUser {
 
     const hashedPassword = await this.hasher.hash(password, salt);
 
+    await this.userRepository.create({ email, password });
+
     return {
       id: "string",
       name: "string",
