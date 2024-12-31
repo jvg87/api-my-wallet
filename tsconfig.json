@@ -4,9 +4,6 @@
   "_version": "22.0.0",
 
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "typeRoots": ["./src/@types"],
-    "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
     "outDir": "dist",
