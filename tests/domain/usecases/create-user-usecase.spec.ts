@@ -36,4 +36,10 @@ describe("CreateUser UseCase", () => {
     await sut.execute(userParams);
     expect(checkByEmailSpy).toHaveBeenCalledWith(userParams.email);
   });
+
+  it("Should return null if UserRepository.checkByEmail return true ", async () => {
+    jest.spyOn(userRepositoryStub, "checkByEmail").mockResolvedValueOnce(true);
+    const emailExists = await sut.execute(userParams);
+    expect(emailExists).toBeFalsy();
+  });
 });
