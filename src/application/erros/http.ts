@@ -11,3 +11,10 @@ export class EmailAlreadyExistsError extends Error {
     this.name = "EmailAlreadyExistsError";
   }
 }
+
+export class ServerError extends Error {
+  constructor() {
+    super(`Internal Server Error`);
+    this.name = "ServerError";
+  }
+}
