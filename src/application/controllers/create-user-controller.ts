@@ -2,7 +2,7 @@ import {
   EmailAlreadyExistsError,
   MissingParamsError,
 } from "@/application/erros";
-import { badRequest, conflict } from "@/application/helpers";
+import { badRequest, conflict, created } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -27,9 +27,7 @@ export class CreateUserController implements IController {
 
     if (!newUser) return conflict(new EmailAlreadyExistsError());
 
-    return {
-      statusCode: 1,
-    };
+    return created();
   }
 
   private validateParams(params: {

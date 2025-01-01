@@ -13,3 +13,9 @@ export const conflict = (error: Error): IHttpResponse => ({
     error: error.message,
   },
 });
+
+export const created = (): IHttpResponse => {
+  return {
+    statusCode: 201,
+  };
+};
