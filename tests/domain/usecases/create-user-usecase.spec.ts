@@ -73,4 +73,12 @@ describe("CreateUser UseCase", () => {
     await sut.execute(userParams);
     expect(checkByEmailSpy).toHaveBeenCalledWith(userParams);
   });
+
+  it("Should throw if UserRepository.create throws", async () => {
+    jest
+      .spyOn(userRepositoryStub, "create")
+      .mockRejectedValueOnce(new Error("any_error"));
+    const promise = sut.execute(userParams);
+    await expect(promise).rejects.toThrow(new Error("any_error"));
+  });
 });
