@@ -3,11 +3,19 @@ import {
   EmailAlreadyExistsError,
   MissingParamsError,
 } from "@/application/erros";
-import { badRequest, conflict } from "@/application/helpers";
+import { badRequest, conflict, created } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
+import { User } from "@/domain/entities";
 import { ICreateUser } from "@/domain/protocols";
 
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import {
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
 
 describe("CreateUser Controller", () => {
   const request: IHttpRequest = {
@@ -18,10 +26,21 @@ describe("CreateUser Controller", () => {
     },
   };
 
+  const user: User = {
+    id: "user_id",
+    email: "user_email@mail.com",
+    name: "user_name",
+    password: "hashed_password",
+  };
+
   const createUserMock: jest.Mocked<ICreateUser> = {
     execute: jest.fn(),
   };
   let sut: CreateUserController;
+
+  beforeAll(() => {
+    createUserMock.execute.mockResolvedValue(user);
+  });
 
   beforeEach(() => {
     sut = new CreateUserController(createUserMock);
@@ -69,5 +88,10 @@ describe("CreateUser Controller", () => {
     jest.spyOn(createUserMock, "execute").mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(conflict(new EmailAlreadyExistsError()));
+  });
+
+  it("Should return 201 if valid data is provided", async () => {
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(created());
   });
 });
