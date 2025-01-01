@@ -1,0 +1,23 @@
+services:
+  api_my_wallet_dev:
+    image: postgres:latest
+    container_name: my_wallet_dev
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.postgres-data:/var/lib/postgresql/data
+
+  api_my_wallet_test:
+    image: postgres:latest
+    container_name: my_wallet_test
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5433:5432"
+
+volumes:
+  .postgres-data:
