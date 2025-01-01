@@ -6,3 +6,73 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  BankAccount BankAccount[]
+  Category    Category[]
+  Transaction Transaction[]
+
+  @@map("users")
+}
+
+enum BankAccountType {
+  CHECKING
+  INVESTMENT
+  CASH
+
+  @@map("bank_account_type")
+}
+
+model BankAccount {
+  id             String          @id @default(uuid())
+  userId         String          @map("user_id")
+  name           String
+  initialBalance Float           @map("initial_balance")
+  color          String
+  type           BankAccountType
+  transactions   Transaction[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("bank_account")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+
+  @@map("transaction_type")
+}
+
+model Category {
+  id           String          @id @default(uuid())
+  userId       String          @map("user_id")
+  name         String
+  icon         String
+  type         TransactionType
+  transactions Transaction[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id            String          @id @default(uuid())
+  userId        String          @map("user_id")
+  bankAccountId String          @map("bank_account_id")
+  categoryId    String?         @map("category_id")
+  name          String
+  value         Float
+  date          DateTime
+  type          TransactionType
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  category    Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@map("transaction")
+}
