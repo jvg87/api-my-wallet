@@ -1,11 +1,14 @@
 import {
+  EmailAlreadyExistsError,
+  MissingParamsError,
+} from "@/application/erros";
+import { badRequest, conflict } from "@/application/helpers";
+import {
   IController,
   IHttpRequest,
   IHttpResponse,
 } from "@/application/protocols";
 import { ICreateUser } from "@/domain/protocols";
-import { MissingParamsError } from "../erros";
-import { badRequest } from "../helpers";
 
 export class CreateUserController implements IController {
   constructor(private readonly createUserUseCase: ICreateUser) {}
@@ -16,7 +19,13 @@ export class CreateUserController implements IController {
 
     if (missingParam) return badRequest(new MissingParamsError(missingParam));
 
-    await this.createUserUseCase.execute({ email, name, password });
+    const newUser = await this.createUserUseCase.execute({
+      email,
+      name,
+      password,
+    });
+
+    if (!newUser) return conflict(new EmailAlreadyExistsError());
 
     return {
       statusCode: 1,

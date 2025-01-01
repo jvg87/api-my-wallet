@@ -4,3 +4,10 @@ export class MissingParamsError extends Error {
     this.name = "MissingParamsError";
   }
 }
+
+export class EmailAlreadyExistsError extends Error {
+  constructor() {
+    super("The email is already in use ");
+    this.name = "EmailAlreadyExistsError";
+  }
+}

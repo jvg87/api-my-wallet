@@ -6,3 +6,10 @@ export const badRequest = (error: Error): IHttpResponse => ({
     error: error.message,
   },
 });
+
+export const conflict = (error: Error): IHttpResponse => ({
+  statusCode: 409,
+  body: {
+    error: error.message,
+  },
+});
