@@ -2,13 +2,26 @@ import { CreateUserController } from "@/application/controllers";
 import { MissingParamsError } from "@/application/erros";
 import { badRequest } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
-import { beforeEach, describe, expect, it } from "@jest/globals";
+import { ICreateUser } from "@/domain/protocols";
+
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 describe("CreateUser Controller", () => {
+  const request: IHttpRequest = {
+    body: {
+      name: "any_name",
+      email: "any_email@mail.com",
+      password: "any_password",
+    },
+  };
+
+  const createUserMock: jest.Mocked<ICreateUser> = {
+    execute: jest.fn(),
+  };
   let sut: CreateUserController;
 
   beforeEach(() => {
-    sut = new CreateUserController();
+    sut = new CreateUserController(createUserMock);
   });
 
   it("Should return 400 if no name is provided", async () => {
@@ -40,5 +53,12 @@ describe("CreateUser Controller", () => {
     expect(httpResponse).toEqual(
       badRequest(new MissingParamsError("password"))
     );
+  });
+
+  it("Should call CreteUser with correct values", async () => {
+    await sut.handle(request);
+    const executeSpy = jest.spyOn(createUserMock, "execute");
+    expect(executeSpy).toHaveBeenCalledTimes(1);
+    expect(executeSpy).toHaveBeenCalledWith(request.body);
   });
 });
