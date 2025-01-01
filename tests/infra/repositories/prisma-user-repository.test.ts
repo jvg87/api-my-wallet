@@ -42,4 +42,18 @@ describe("PrismaUser Repository", () => {
       expect(isExists).toBeFalsy();
     });
   });
+
+  describe("create()", () => {
+    it("Should return a new user on success", async () => {
+      const user = await sut.create({
+        email: "any_email@mail.com",
+        name: "any_name",
+        password: "any_password",
+      });
+
+      expect(user).toBeTruthy();
+      expect(user?.id).toBeTruthy();
+      expect(user?.name).toBe("any_name");
+    });
+  });
 });
