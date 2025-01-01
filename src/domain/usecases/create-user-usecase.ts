@@ -7,7 +7,7 @@ export class CreateUserUseCase implements ICreateUser {
     private readonly hasher: IHasher
   ) {}
   async execute(userParams: UserParams): Promise<User | null> {
-    const { email, password } = userParams;
+    const { email, password, name } = userParams;
 
     const emailExists = await this.userRepository.checkByEmail(email);
 
@@ -17,13 +17,12 @@ export class CreateUserUseCase implements ICreateUser {
 
     const hashedPassword = await this.hasher.hash(password, salt);
 
-    await this.userRepository.create({ email, password });
+    const newUser = await this.userRepository.create({
+      email,
+      password: hashedPassword,
+      name,
+    });
 
-    return {
-      id: "string",
-      name: "string",
-      email: "string",
-      password: "string",
-    };
+    return newUser;
   }
 }

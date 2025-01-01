@@ -5,4 +5,4 @@ export type User = {
   password: string;
 };
 
-export type UserParams = Omit<User, "id" | "name">;
+export type UserParams = Omit<User, "id">;
