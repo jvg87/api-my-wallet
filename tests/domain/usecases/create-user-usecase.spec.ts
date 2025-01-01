@@ -1,4 +1,4 @@
-import { UserParams } from "@/domain/entities";
+import { User, UserParams } from "@/domain/entities";
 import { IHasher, IUserRepository } from "@/domain/protocols";
 import { CreateUserUseCase } from "@/domain/usecases";
 
@@ -13,7 +13,15 @@ import {
 
 describe("CreateUser UseCase", () => {
   const userParams: UserParams = {
+    email: "any_email@mail.com",
+    name: "any_name",
+    password: "any_password",
+  };
+
+  const newUser: User = {
+    id: "user_id",
     email: "user_email@mail.com",
+    name: "user_name",
     password: "user_password",
   };
 
@@ -30,6 +38,8 @@ describe("CreateUser UseCase", () => {
 
   beforeAll(() => {
     userRepositoryStub.checkByEmail.mockResolvedValue(false);
+    userRepositoryStub.create.mockResolvedValue(newUser);
+    hasherStub.hash.mockResolvedValue("hashed_password");
   });
 
   beforeEach(() => {
@@ -71,7 +81,11 @@ describe("CreateUser UseCase", () => {
   it("Should call UserRepository.create with correct values ", async () => {
     const checkByEmailSpy = jest.spyOn(userRepositoryStub, "create");
     await sut.execute(userParams);
-    expect(checkByEmailSpy).toHaveBeenCalledWith(userParams);
+    expect(checkByEmailSpy).toHaveBeenCalledWith({
+      name: userParams.name,
+      email: userParams.email,
+      password: "hashed_password",
+    });
   });
 
   it("Should throw if UserRepository.create throws", async () => {
@@ -80,5 +94,10 @@ describe("CreateUser UseCase", () => {
       .mockRejectedValueOnce(new Error("any_error"));
     const promise = sut.execute(userParams);
     await expect(promise).rejects.toThrow(new Error("any_error"));
+  });
+
+  it("Should return a new user if success", async () => {
+    const user = await sut.execute(userParams);
+    expect(user).toEqual(newUser);
   });
 });
