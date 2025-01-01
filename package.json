@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "dev": "tsx watch --env-file .env src/main/server.ts",
     "docker:up": "docker-compose up api_my_wallet_test -d && sleep 1",
     "docker:down": "docker-compose down api_my_wallet_test",
     "pretest": "npm run docker:down && npm run docker:up && dotenv -e .env.test -- npx prisma migrate reset --force",
@@ -22,6 +23,7 @@
     "@eslint/js": "^9.17.0",
     "@jest/globals": "^29.7.0",
     "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.17.0",
@@ -42,6 +44,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.1.0",
-    "bcrypt": "^5.1.1"
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2"
   }
 }
