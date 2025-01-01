@@ -36,5 +36,10 @@ describe("PrismaUser Repository", () => {
       const isExists = await sut.checkByEmail("any_email@mail.com");
       expect(isExists).toBeTruthy();
     });
+
+    it("Should return false if email not exists", async () => {
+      const isExists = await sut.checkByEmail("any_email@mail.com");
+      expect(isExists).toBeFalsy();
+    });
   });
 });
