@@ -2,8 +2,14 @@ import { CreateUserController } from "@/application/controllers";
 import {
   EmailAlreadyExistsError,
   MissingParamsError,
+  ServerError,
 } from "@/application/erros";
-import { badRequest, conflict, created } from "@/application/helpers";
+import {
+  badRequest,
+  conflict,
+  created,
+  serverError,
+} from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { User } from "@/domain/entities";
 import { ICreateUser } from "@/domain/protocols";
@@ -93,5 +99,13 @@ describe("CreateUser Controller", () => {
   it("Should return 201 if valid data is provided", async () => {
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(created());
+  });
+
+  it("Should returns 500 if CreateUser throws", async () => {
+    jest
+      .spyOn(createUserMock, "execute")
+      .mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
