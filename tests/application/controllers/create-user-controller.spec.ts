@@ -1,6 +1,9 @@
 import { CreateUserController } from "@/application/controllers";
-import { MissingParamsError } from "@/application/erros";
-import { badRequest } from "@/application/helpers";
+import {
+  EmailAlreadyExistsError,
+  MissingParamsError,
+} from "@/application/erros";
+import { badRequest, conflict } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { ICreateUser } from "@/domain/protocols";
 
@@ -60,5 +63,11 @@ describe("CreateUser Controller", () => {
     const executeSpy = jest.spyOn(createUserMock, "execute");
     expect(executeSpy).toHaveBeenCalledTimes(1);
     expect(executeSpy).toHaveBeenCalledWith(request.body);
+  });
+
+  it("Should return 409 if CreateUser returns null", async () => {
+    jest.spyOn(createUserMock, "execute").mockResolvedValueOnce(null);
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(conflict(new EmailAlreadyExistsError()));
   });
 });
