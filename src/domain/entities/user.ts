@@ -6,3 +6,14 @@ export type User = {
 };
 
 export type UserParams = Omit<User, "id">;
+
+export type AuthUser = {
+  name: string;
+  email: string;
+  token: string;
+};
+
+export type AuthUserParams = {
+  email: string;
+  password: string;
+};
