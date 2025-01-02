@@ -1,3 +1,12 @@
+import {
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest,
+} from "@jest/globals";
+
 import { CreateUserController } from "@/application/controllers";
 import {
   EmailAlreadyExistsError,
@@ -13,15 +22,6 @@ import {
 import { IHttpRequest } from "@/application/protocols";
 import { User } from "@/domain/entities";
 import { ICreateUser } from "@/domain/protocols";
-
-import {
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
 
 describe("CreateUser Controller", () => {
   const request: IHttpRequest = {
