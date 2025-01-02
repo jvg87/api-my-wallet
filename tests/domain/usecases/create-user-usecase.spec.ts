@@ -28,6 +28,7 @@ describe("CreateUser UseCase", () => {
   const userRepositoryStub: jest.Mocked<IUserRepository> = {
     checkByEmail: jest.fn(),
     create: jest.fn(),
+    findByEmail: jest.fn(),
   };
 
   const hasherStub: jest.Mocked<IHasher> = {
