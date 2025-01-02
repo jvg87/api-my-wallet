@@ -1,7 +1,3 @@
-import { User, UserParams } from "@/domain/entities";
-import { IHasher, IUserRepository } from "@/domain/protocols";
-import { CreateUserUseCase } from "@/domain/usecases";
-
 import {
   beforeAll,
   beforeEach,
@@ -11,26 +7,16 @@ import {
   jest,
 } from "@jest/globals";
 
+import { IHasher } from "@/domain/protocols";
+import { CreateUserUseCase } from "@/domain/usecases";
+
+import {
+  mockUser,
+  mockUserParams,
+  mockUserRepository,
+} from "@/tests/domain/mocks";
+
 describe("CreateUser UseCase", () => {
-  const userParams: UserParams = {
-    email: "any_email@mail.com",
-    name: "any_name",
-    password: "any_password",
-  };
-
-  const newUser: User = {
-    id: "user_id",
-    email: "user_email@mail.com",
-    name: "user_name",
-    password: "user_password",
-  };
-
-  const userRepositoryStub: jest.Mocked<IUserRepository> = {
-    checkByEmail: jest.fn(),
-    create: jest.fn(),
-    findByEmail: jest.fn(),
-  };
-
   const hasherStub: jest.Mocked<IHasher> = {
     hash: jest.fn(),
   };
@@ -38,67 +24,67 @@ describe("CreateUser UseCase", () => {
   let sut: CreateUserUseCase;
 
   beforeAll(() => {
-    userRepositoryStub.checkByEmail.mockResolvedValue(false);
-    userRepositoryStub.create.mockResolvedValue(newUser);
+    mockUserRepository.checkByEmail.mockResolvedValue(false);
+    mockUserRepository.create.mockResolvedValue(mockUser());
     hasherStub.hash.mockResolvedValue("hashed_password");
   });
 
   beforeEach(() => {
-    sut = new CreateUserUseCase(userRepositoryStub, hasherStub);
+    sut = new CreateUserUseCase(mockUserRepository, hasherStub);
   });
 
   it("Should call UserRepository.checkByEmail with correct email ", async () => {
-    const checkByEmailSpy = jest.spyOn(userRepositoryStub, "checkByEmail");
-    await sut.execute(userParams);
-    expect(checkByEmailSpy).toHaveBeenCalledWith(userParams.email);
+    const checkByEmailSpy = jest.spyOn(mockUserRepository, "checkByEmail");
+    await sut.execute(mockUserParams());
+    expect(checkByEmailSpy).toHaveBeenCalledWith(mockUserParams().email);
   });
 
   it("Should return null if UserRepository.checkByEmail return true ", async () => {
-    jest.spyOn(userRepositoryStub, "checkByEmail").mockResolvedValueOnce(true);
-    const emailExists = await sut.execute(userParams);
+    jest.spyOn(mockUserRepository, "checkByEmail").mockResolvedValueOnce(true);
+    const emailExists = await sut.execute(mockUserParams());
     expect(emailExists).toBeFalsy();
   });
 
   it("Should throw if UserRepository.checkByEmail throws", async () => {
     jest
-      .spyOn(userRepositoryStub, "checkByEmail")
+      .spyOn(mockUserRepository, "checkByEmail")
       .mockRejectedValueOnce(new Error());
-    const promise = sut.execute(userParams);
+    const promise = sut.execute(mockUserParams());
     await expect(promise).rejects.toThrow();
   });
 
   it("Should call hash with correct password ", async () => {
     const hashSpy = jest.spyOn(hasherStub, "hash");
-    await sut.execute(userParams);
-    expect(hashSpy).toHaveBeenCalledWith(userParams.password, 12);
+    await sut.execute(mockUserParams());
+    expect(hashSpy).toHaveBeenCalledWith(mockUserParams().password, 12);
   });
 
   it("Should throw if hash throws", async () => {
     jest.spyOn(hasherStub, "hash").mockRejectedValueOnce(new Error());
-    const promise = sut.execute(userParams);
+    const promise = sut.execute(mockUserParams());
     await expect(promise).rejects.toThrow();
   });
 
   it("Should call UserRepository.create with correct values ", async () => {
-    const checkByEmailSpy = jest.spyOn(userRepositoryStub, "create");
-    await sut.execute(userParams);
+    const checkByEmailSpy = jest.spyOn(mockUserRepository, "create");
+    await sut.execute(mockUserParams());
     expect(checkByEmailSpy).toHaveBeenCalledWith({
-      name: userParams.name,
-      email: userParams.email,
+      name: mockUserParams().name,
+      email: mockUserParams().email,
       password: "hashed_password",
     });
   });
 
   it("Should throw if UserRepository.create throws", async () => {
     jest
-      .spyOn(userRepositoryStub, "create")
+      .spyOn(mockUserRepository, "create")
       .mockRejectedValueOnce(new Error("any_error"));
-    const promise = sut.execute(userParams);
+    const promise = sut.execute(mockUserParams());
     await expect(promise).rejects.toThrow(new Error("any_error"));
   });
 
   it("Should return a new user if success", async () => {
-    const user = await sut.execute(userParams);
-    expect(user).toEqual(newUser);
+    const user = await sut.execute(mockUserParams());
+    expect(user).toEqual(mockUser());
   });
 });
