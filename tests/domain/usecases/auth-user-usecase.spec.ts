@@ -58,4 +58,10 @@ describe("AuthUser UseCase", () => {
       mockUser().password
     );
   });
+
+  it("Should throws if HashComparer throws", async () => {
+    jest.spyOn(mockHashComparer, "compare").mockRejectedValueOnce(new Error());
+    const promise = sut.execute(mockAuthUserParams());
+    await expect(promise).rejects.toThrow();
+  });
 });
