@@ -15,6 +15,12 @@ import { IAuthUser } from "@/domain/protocols";
 import { mockAuthUser } from "@/tests/domain/mocks";
 
 describe("AuthUser Controller", () => {
+  const request: IHttpRequest = {
+    body: {
+      email: "any_email@mail.com",
+      password: "any_password",
+    },
+  };
   const mockAuthUserUseCase: jest.Mocked<IAuthUser> = {
     execute: jest.fn(),
   };
@@ -26,7 +32,7 @@ describe("AuthUser Controller", () => {
   });
 
   beforeEach(() => {
-    sut = new AuthUserController();
+    sut = new AuthUserController(mockAuthUserUseCase);
   });
 
   it("Should return 400 if no email is provided ", async () => {
@@ -47,5 +53,11 @@ describe("AuthUser Controller", () => {
     expect(httpResponse).toEqual(
       badRequest(new MissingParamsError("password"))
     );
+  });
+
+  it("Should call AuthUser with correct values", async () => {
+    const executeSpy = jest.spyOn(mockAuthUserUseCase, "execute");
+    await sut.handle(request);
+    expect(executeSpy).toHaveBeenCalledWith(request.body);
   });
 });
