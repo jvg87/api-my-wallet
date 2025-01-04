@@ -7,8 +7,8 @@ import {
   jest,
 } from "@jest/globals";
 
+import { IHashComparer } from "@/domain/protocols";
 import { AuthUserUseCase } from "@/domain/usecases";
-
 import {
   mockAuthUserParams,
   mockUser,
@@ -16,14 +16,18 @@ import {
 } from "@/tests/domain/mocks";
 
 describe("AuthUser UseCase", () => {
+  const mockHashComparer: jest.Mocked<IHashComparer> = {
+    compare: jest.fn(),
+  };
   let sut: AuthUserUseCase;
 
   beforeAll(() => {
     mockUserRepository.findByEmail.mockResolvedValue(mockUser());
+    mockHashComparer.compare.mockResolvedValue(true);
   });
 
   beforeEach(() => {
-    sut = new AuthUserUseCase(mockUserRepository);
+    sut = new AuthUserUseCase(mockUserRepository, mockHashComparer);
   });
 
   it("Should call UserRepository.findByEmail with correct email ", async () => {
@@ -44,5 +48,14 @@ describe("AuthUser UseCase", () => {
       .mockRejectedValueOnce(new Error());
     const promise = sut.execute(mockAuthUserParams());
     await expect(promise).rejects.toThrow();
+  });
+
+  it("Should call HashComparer with correct values", async () => {
+    const compareSpy = jest.spyOn(mockHashComparer, "compare");
+    await sut.execute(mockAuthUserParams());
+    expect(compareSpy).toHaveBeenCalledWith(
+      mockAuthUserParams().password,
+      mockUser().password
+    );
   });
 });
