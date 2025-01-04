@@ -12,6 +12,8 @@ export class AuthUserController implements IController {
 
     if (!email) return badRequest(new MissingParamsError("email"));
 
+    if (!password) return badRequest(new MissingParamsError("password"));
+
     return {
       statusCode: 1,
     };
