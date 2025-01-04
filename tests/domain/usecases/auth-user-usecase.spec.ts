@@ -7,9 +7,10 @@ import {
   jest,
 } from "@jest/globals";
 
-import { IHashComparer } from "@/domain/protocols";
+import { IEncrypter, IHashComparer } from "@/domain/protocols";
 import { AuthUserUseCase } from "@/domain/usecases";
 import {
+  mockAuthUser,
   mockAuthUserParams,
   mockUser,
   mockUserRepository,
@@ -19,15 +20,25 @@ describe("AuthUser UseCase", () => {
   const mockHashComparer: jest.Mocked<IHashComparer> = {
     compare: jest.fn(),
   };
+
+  const mockEncrypter: jest.Mocked<IEncrypter> = {
+    encrypt: jest.fn(),
+  };
+
   let sut: AuthUserUseCase;
 
   beforeAll(() => {
     mockUserRepository.findByEmail.mockResolvedValue(mockUser());
     mockHashComparer.compare.mockResolvedValue(true);
+    mockEncrypter.encrypt.mockResolvedValue(mockAuthUser().token);
   });
 
   beforeEach(() => {
-    sut = new AuthUserUseCase(mockUserRepository, mockHashComparer);
+    sut = new AuthUserUseCase(
+      mockUserRepository,
+      mockHashComparer,
+      mockEncrypter
+    );
   });
 
   it("Should call UserRepository.findByEmail with correct email ", async () => {
@@ -69,5 +80,11 @@ describe("AuthUser UseCase", () => {
     jest.spyOn(mockHashComparer, "compare").mockResolvedValueOnce(false);
     const user = await sut.execute(mockAuthUserParams());
     expect(user).toBeNull();
+  });
+
+  it("Should call Encrypter with correct id", async () => {
+    const encryptSpy = jest.spyOn(mockEncrypter, "encrypt");
+    await sut.execute(mockAuthUserParams());
+    expect(encryptSpy).toHaveBeenCalledWith(mockUser().id);
   });
 });
