@@ -12,7 +12,7 @@ import { EmailAlreadyExistsError } from "@/application/erros";
 import app from "@/main/config/app";
 import { prisma } from "@/utils";
 
-describe("CreateUser Controller", () => {
+describe("CreateUser Route", () => {
   beforeAll(() => {});
 
   afterAll(async () => {
@@ -24,7 +24,7 @@ describe("CreateUser Controller", () => {
   });
 
   it("Should return 201 on created user", async () => {
-    const { status, body } = await request(app).post("/users").send({
+    const { status } = await request(app).post("/users").send({
       name: "any_name",
       email: "any_email@mail.com",
       password: "any_password",
