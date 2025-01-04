@@ -1,5 +1,9 @@
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import {
+  MissingParamsError,
+  ServerError,
+  UnauthorizedError,
+} from "@/application/erros";
+import { badRequest, serverError, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -10,18 +14,22 @@ import { IAuthUser } from "@/domain/protocols";
 export class AuthUserController implements IController {
   constructor(private readonly authUser: IAuthUser) {}
   async handle(request: IHttpRequest): Promise<IHttpResponse> {
-    const { email, password } = request.body;
+    try {
+      const { email, password } = request.body;
 
-    if (!email) return badRequest(new MissingParamsError("email"));
+      if (!email) return badRequest(new MissingParamsError("email"));
 
-    if (!password) return badRequest(new MissingParamsError("password"));
+      if (!password) return badRequest(new MissingParamsError("password"));
 
-    const authUser = await this.authUser.execute({ email, password });
+      const authUser = await this.authUser.execute({ email, password });
 
-    if (!authUser) return unauthorized(new UnauthorizedError());
+      if (!authUser) return unauthorized(new UnauthorizedError());
 
-    return {
-      statusCode: 1,
-    };
+      return {
+        statusCode: 1,
+      };
+    } catch (error) {
+      return serverError(error as ServerError);
+    }
   }
 }
