@@ -8,8 +8,12 @@ import {
 } from "@jest/globals";
 
 import { AuthUserController } from "@/application/controllers";
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import {
+  MissingParamsError,
+  ServerError,
+  UnauthorizedError,
+} from "@/application/erros";
+import { badRequest, serverError, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IAuthUser } from "@/domain/protocols";
 import { mockAuthUser } from "@/tests/domain/mocks";
@@ -65,5 +69,13 @@ describe("AuthUser Controller", () => {
     jest.spyOn(mockAuthUserUseCase, "execute").mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(unauthorized(new UnauthorizedError()));
+  });
+
+  it("Should returns 500 if AuthUser throws", async () => {
+    jest
+      .spyOn(mockAuthUserUseCase, "execute")
+      .mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
