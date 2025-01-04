@@ -64,4 +64,10 @@ describe("AuthUser UseCase", () => {
     const promise = sut.execute(mockAuthUserParams());
     await expect(promise).rejects.toThrow();
   });
+
+  it("Should return null if HashComparer returns false", async () => {
+    jest.spyOn(mockHashComparer, "compare").mockResolvedValueOnce(false);
+    const user = await sut.execute(mockAuthUserParams());
+    expect(user).toBeNull();
+  });
 });
