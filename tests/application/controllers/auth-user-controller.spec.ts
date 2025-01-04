@@ -36,4 +36,16 @@ describe("AuthUser Controller", () => {
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(badRequest(new MissingParamsError("email")));
   });
+
+  it("Should return 400 if no password is provided ", async () => {
+    const request: IHttpRequest = {
+      body: {
+        email: "any_email@mail.com",
+      },
+    };
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(
+      badRequest(new MissingParamsError("password"))
+    );
+  });
 });
