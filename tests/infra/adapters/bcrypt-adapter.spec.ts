@@ -18,6 +18,7 @@ describe("Bcrypt Adapter", () => {
 
   beforeAll(() => {
     mockedBcrypt.hash.mockImplementation(() => Promise.resolve(hashResult));
+    mockedBcrypt.compare.mockImplementation(() => Promise.resolve(true));
   });
 
   beforeEach(() => {
@@ -42,6 +43,14 @@ describe("Bcrypt Adapter", () => {
       });
       const promise = sut.hash("any_value", 12);
       await expect(promise).rejects.toThrow(new Error("any_error"));
+    });
+  });
+
+  describe("compare()", () => {
+    it("Should call compare with correct values", async () => {
+      const compareSpt = jest.spyOn(mockedBcrypt, "compare");
+      await sut.compare("any_value", hashResult);
+      expect(compareSpt).toHaveBeenCalledWith("any_value", hashResult);
     });
   });
 });
