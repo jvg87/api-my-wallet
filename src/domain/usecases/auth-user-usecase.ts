@@ -11,7 +11,12 @@ export class AuthUserUseCase implements IAuthUser {
 
     if (!user) return null;
 
-    await this.hashComparer.compare(authParams.password, user.password);
+    const isValid = await this.hashComparer.compare(
+      authParams.password,
+      user.password
+    );
+
+    if (!isValid) return null;
 
     return {
       email: "",
