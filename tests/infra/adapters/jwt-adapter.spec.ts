@@ -36,5 +36,10 @@ describe("Jwt Adapter", () => {
         { expiresIn: "expiresDate" }
       );
     });
+
+    it("Should return a valid token on sign success", async () => {
+      const accessToken = await sut.encrypt(mockUser().id);
+      expect(accessToken).toBe(mockAuthUser().token);
+    });
   });
 });
