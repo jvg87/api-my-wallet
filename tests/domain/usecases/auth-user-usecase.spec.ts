@@ -93,4 +93,9 @@ describe("AuthUser UseCase", () => {
     const promise = sut.execute(mockAuthUserParams());
     await expect(promise).rejects.toThrow();
   });
+
+  it("Should return AuthUser on success", async () => {
+    const authUser = await sut.execute(mockAuthUserParams());
+    expect(authUser).toEqual(mockAuthUser());
+  });
 });
