@@ -13,7 +13,12 @@ import {
   ServerError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, serverError, unauthorized } from "@/application/helpers";
+import {
+  badRequest,
+  ok,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IAuthUser } from "@/domain/protocols";
 import { mockAuthUser } from "@/tests/domain/mocks";
@@ -77,5 +82,10 @@ describe("AuthUser Controller", () => {
       .mockRejectedValueOnce(new ServerError());
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(serverError(new ServerError()));
+  });
+
+  it("Should return 200 if valid credentials are provided", async () => {
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(ok(mockAuthUser()));
   });
 });
