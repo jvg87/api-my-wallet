@@ -87,4 +87,10 @@ describe("AuthUser UseCase", () => {
     await sut.execute(mockAuthUserParams());
     expect(encryptSpy).toHaveBeenCalledWith(mockUser().id);
   });
+
+  it("Should throw if Encrypter throws", async () => {
+    jest.spyOn(mockEncrypter, "encrypt").mockRejectedValueOnce(new Error());
+    const promise = sut.execute(mockAuthUserParams());
+    await expect(promise).rejects.toThrow();
+  });
 });
