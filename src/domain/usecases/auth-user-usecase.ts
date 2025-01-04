@@ -24,12 +24,12 @@ export class AuthUserUseCase implements IAuthUser {
 
     if (!isValid) return null;
 
-    await this.encrypter.encrypt(user.id);
+    const accessToken = await this.encrypter.encrypt(user.id);
 
     return {
-      email: "",
-      name: "",
-      token: "",
+      email: user.email,
+      name: user.name,
+      token: accessToken,
     };
   }
 }
