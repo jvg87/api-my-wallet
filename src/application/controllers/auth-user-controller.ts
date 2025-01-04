@@ -1,5 +1,5 @@
-import { MissingParamsError } from "@/application/erros";
-import { badRequest } from "@/application/helpers";
+import { MissingParamsError, UnauthorizedError } from "@/application/erros";
+import { badRequest, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -16,7 +16,9 @@ export class AuthUserController implements IController {
 
     if (!password) return badRequest(new MissingParamsError("password"));
 
-    await this.authUser.execute({ email, password });
+    const authUser = await this.authUser.execute({ email, password });
+
+    if (!authUser) return unauthorized(new UnauthorizedError());
 
     return {
       statusCode: 1,

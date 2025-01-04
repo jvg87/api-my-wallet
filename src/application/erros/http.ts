@@ -18,3 +18,10 @@ export class ServerError extends Error {
     this.name = "ServerError";
   }
 }
+
+export class UnauthorizedError extends Error {
+  constructor() {
+    super(`Invalid Credentials`);
+    this.name = "UnauthorizedError";
+  }
+}

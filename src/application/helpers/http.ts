@@ -24,3 +24,12 @@ export const serverError = (error: Error): IHttpResponse => ({
     error: error.message,
   },
 });
+
+export const unauthorized = (error: Error): IHttpResponse => {
+  return {
+    statusCode: 401,
+    body: {
+      error: error.message,
+    },
+  };
+};
