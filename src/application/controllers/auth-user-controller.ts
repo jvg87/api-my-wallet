@@ -3,7 +3,12 @@ import {
   ServerError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, serverError, unauthorized } from "@/application/helpers";
+import {
+  badRequest,
+  ok,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -25,9 +30,7 @@ export class AuthUserController implements IController {
 
       if (!authUser) return unauthorized(new UnauthorizedError());
 
-      return {
-        statusCode: 1,
-      };
+      return ok(authUser);
     } catch (error) {
       return serverError(error as ServerError);
     }

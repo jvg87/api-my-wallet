@@ -33,3 +33,10 @@ export const unauthorized = (error: Error): IHttpResponse => {
     },
   };
 };
+
+export const ok = (data: any) => {
+  return {
+    statusCode: 200,
+    body: data,
+  };
+};
