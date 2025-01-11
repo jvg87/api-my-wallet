@@ -6,4 +6,5 @@ export const mockUserRepository: jest.Mocked<IUserRepository> = {
   checkByEmail: jest.fn(),
   create: jest.fn(),
   findByEmail: jest.fn(),
+  getById: jest.fn(),
 };

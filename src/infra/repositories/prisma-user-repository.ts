@@ -1,4 +1,4 @@
-import { User, UserParams } from "@/domain/entities";
+import { User, UserDetails, UserParams } from "@/domain/entities";
 import { IUserRepository } from "@/domain/protocols";
 import { prisma } from "@/utils";
 
@@ -31,6 +31,15 @@ export class PrismaUserRepository implements IUserRepository {
     const user = await prisma.user.findUnique({
       where: {
         email,
+      },
+    });
+    return user;
+  }
+
+  async getById(id: string): Promise<UserDetails | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
       },
     });
     return user;
