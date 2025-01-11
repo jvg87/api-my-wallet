@@ -31,9 +31,22 @@ describe("GetUser UseCase", () => {
     expect(getByIdSpy).toHaveBeenCalledWith(mockUser().id);
   });
 
-  it("Should return null if UserRepository.findByEmail return null", async () => {
+  it("Should return null if UserRepository.getById return null", async () => {
     jest.spyOn(mockUserRepository, "getById").mockResolvedValueOnce(null);
     const user = await sut.execute(mockUser().id);
     expect(user).toBeNull();
+  });
+
+  it("Should throws if UserRepository.getById throws ", async () => {
+    jest
+      .spyOn(mockUserRepository, "getById")
+      .mockRejectedValueOnce(new Error());
+    const promise = sut.execute(mockUser().id);
+    await expect(promise).rejects.toThrow();
+  });
+
+  it("Should return a user on success", async () => {
+    const user = await sut.execute(mockUser().id);
+    expect(user).toEqual(mockDetailUser());
   });
 });
