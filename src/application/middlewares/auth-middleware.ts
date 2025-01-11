@@ -15,7 +15,11 @@ export class AuthMiddleware implements IMiddleware {
 
     const [, token] = authorization.split(" ");
 
-    await this.decrypter.decrypt(token);
+    const payload = await this.decrypter.decrypt(token);
+
+    if (!payload) {
+      return unauthorized(new UnauthorizedError());
+    }
 
     return {
       statusCode: 1,
