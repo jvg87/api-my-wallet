@@ -8,9 +8,6 @@ export class GetUserUseCase implements IGetUser {
 
     if (!user) return null;
 
-    return {
-      email: "",
-      name: "",
-    };
+    return user;
   }
 }
