@@ -17,3 +17,5 @@ export type AuthUserParams = {
   email: string;
   password: string;
 };
+
+export type UserDetails = Omit<User, "id" | "password">;
