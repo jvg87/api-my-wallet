@@ -8,7 +8,7 @@ import {
 } from "@jest/globals";
 
 import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { ok, unauthorized } from "@/application/helpers";
 import { AuthMiddleware } from "@/application/middlewares";
 import { IRequest } from "@/application/protocols";
 import { IDecrypter } from "@/domain/protocols";
@@ -52,5 +52,11 @@ describe("Auth Middleware", () => {
     mockDecrypter.decrypt.mockResolvedValueOnce(null);
     const response = await sut.handle(mockRequest);
     expect(response).toEqual(unauthorized(new UnauthorizedError()));
+  });
+
+  it("Should return 200 if success", async () => {
+    const result = await sut.handle(mockRequest);
+    const payload = await mockDecrypter.decrypt("valid_token");
+    expect(result).toEqual(ok({ userId: payload?.sub }));
   });
 });
