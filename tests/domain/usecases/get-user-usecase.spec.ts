@@ -30,4 +30,10 @@ describe("GetUser UseCase", () => {
     await sut.execute(mockUser().id);
     expect(getByIdSpy).toHaveBeenCalledWith(mockUser().id);
   });
+
+  it("Should return null if UserRepository.findByEmail return null", async () => {
+    jest.spyOn(mockUserRepository, "getById").mockResolvedValueOnce(null);
+    const user = await sut.execute(mockUser().id);
+    expect(user).toBeNull();
+  });
 });
