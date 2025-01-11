@@ -1,5 +1,5 @@
 import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { ok, unauthorized } from "@/application/helpers";
 import { IMiddleware, IRequest, IResponse } from "@/application/protocols";
 import { IDecrypter } from "@/domain/protocols";
 
@@ -21,8 +21,10 @@ export class AuthMiddleware implements IMiddleware {
       return unauthorized(new UnauthorizedError());
     }
 
-    return {
-      statusCode: 1,
+    const data = {
+      userId: payload.sub,
     };
+
+    return ok(data);
   }
 }
