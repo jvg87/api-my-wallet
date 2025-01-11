@@ -47,4 +47,10 @@ describe("Auth Middleware", () => {
     await sut.handle(mockRequest);
     expect(mockDecrypter.decrypt).toHaveBeenCalledWith("valid_token");
   });
+
+  it("Should return 401 if decrypter returns null", async () => {
+    mockDecrypter.decrypt.mockResolvedValueOnce(null);
+    const response = await sut.handle(mockRequest);
+    expect(response).toEqual(unauthorized(new UnauthorizedError()));
+  });
 });
