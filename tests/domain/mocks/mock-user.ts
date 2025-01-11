@@ -1,4 +1,10 @@
-import { AuthUser, AuthUserParams, User, UserParams } from "@/domain/entities";
+import {
+  AuthUser,
+  AuthUserParams,
+  User,
+  UserDetails,
+  UserParams,
+} from "@/domain/entities";
 
 export const mockUser = (): User => ({
   id: "user_id",
@@ -22,4 +28,9 @@ export const mockAuthUser = (): AuthUser => ({
   email: "user_email@mail.com",
   name: "user_name",
   token: "user_token",
+});
+
+export const mockDetailUser = (): UserDetails => ({
+  email: "user_email@mail.com",
+  name: "user_name",
 });
