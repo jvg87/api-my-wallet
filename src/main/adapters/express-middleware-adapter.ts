@@ -10,11 +10,12 @@ export const expressMiddlewareAdapter = (
       headers: req.headers,
     });
 
-    if (statusCode === 200) {
-      req.userId = body?.data.userId;
-      next();
+    if (statusCode !== 200) {
+      res.status(statusCode).json(body);
+      return;
     }
 
-    res.status(statusCode).json(body);
+    req.userId = body?.data.userId;
+    next();
   };
 };
