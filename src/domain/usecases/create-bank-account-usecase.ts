@@ -9,7 +9,7 @@ export class CreateBankAccountUseCase implements ICreateBankAccount {
   async execute(
     bankAccountParams: BankAccountParams
   ): Promise<BankAccount | null> {
-    const { userId } = bankAccountParams;
+    const { userId, color, initialBalance, name, type } = bankAccountParams;
 
     if (!userId) return null;
 
