@@ -5,6 +5,7 @@ export enum BankAccountType {
 }
 
 export type BankAccount = {
+  id: string;
   name: string;
   initialBalance: number;
   color: string;

@@ -14,6 +14,7 @@ export class CreateBankAccountUseCase implements ICreateBankAccount {
     if (!userId) return null;
 
     return {
+      id: "",
       color: "",
       initialBalance: 0,
       name: "",
