@@ -1,5 +1,15 @@
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import {
+  InvalidParamsError,
+  MissingParamsError,
+  ServerError,
+  UnauthorizedError,
+} from "@/application/erros";
+import {
+  badRequest,
+  created,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -11,24 +21,41 @@ import { ICreateBankAccount } from "@/domain/protocols";
 export class CreateBankAccountController implements IController {
   constructor(private readonly createBankAccount: ICreateBankAccount) {}
   async handle(request: IHttpRequest): Promise<IHttpResponse> {
-    const userId = request.userId;
+    try {
+      const userId = request.userId;
 
-    if (!userId) return unauthorized(new UnauthorizedError());
+      if (!userId) return unauthorized(new UnauthorizedError());
 
-    const { name, initialBalance, color, type } = request.body;
+      const { name, initialBalance, color, type } = request.body;
 
-    const missingParam = this.validateParams({
-      name,
-      initialBalance,
-      color,
-      type,
-    });
+      const missingParam = this.validateParams({
+        name,
+        initialBalance,
+        color,
+        type,
+      });
 
-    if (missingParam) return badRequest(new MissingParamsError(missingParam));
+      if (missingParam) return badRequest(new MissingParamsError(missingParam));
 
-    return {
-      statusCode: 1,
-    };
+      if (
+        type !== BankAccountType.CASH &&
+        type !== BankAccountType.CHECKING &&
+        type !== BankAccountType.INVESTMENT
+      )
+        return badRequest(new InvalidParamsError("type"));
+
+      await this.createBankAccount.execute({
+        userId,
+        color,
+        initialBalance,
+        name,
+        type,
+      });
+
+      return created();
+    } catch (error) {
+      return serverError(error as ServerError);
+    }
   }
 
   private validateParams(params: {

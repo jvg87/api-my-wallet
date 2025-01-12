@@ -5,6 +5,13 @@ export class MissingParamsError extends Error {
   }
 }
 
+export class InvalidParamsError extends Error {
+  constructor(param: string) {
+    super(`Invalid param: ${param}`);
+    this.name = "InvalidParamsError";
+  }
+}
+
 export class EmailAlreadyExistsError extends Error {
   constructor() {
     super("The email is already in use ");
