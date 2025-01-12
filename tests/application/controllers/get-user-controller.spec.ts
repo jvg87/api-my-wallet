@@ -46,8 +46,7 @@ describe("GetUser Controller", () => {
 
   it("Should call GetUser method with correct id", async () => {
     await sut.handle(request);
-    const spy = jest.spyOn(mockGetUser, "execute");
-    expect(spy).toHaveBeenCalledWith("user_id");
+    expect(mockGetUser.execute).toHaveBeenCalledWith("user_id");
   });
 
   it("Should return 200 if valid id is provided", async () => {

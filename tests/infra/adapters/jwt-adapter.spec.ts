@@ -14,12 +14,12 @@ import { mockAuthUser, mockUser } from "@/tests/domain/mocks";
 jest.mock("jsonwebtoken");
 
 describe("Jwt Adapter", () => {
-  let sut: JwtAdapter;
-
   const mockJwt = jwt as jest.Mocked<typeof jwt>;
 
   const SECRET_KEY = "any_key";
   const EXPIRE_DATE = "any_date";
+
+  let sut: JwtAdapter;
 
   beforeAll(() => {
     mockJwt.sign.mockImplementation(() => mockAuthUser().token);
@@ -31,11 +31,14 @@ describe("Jwt Adapter", () => {
 
   describe("sign()", () => {
     it("Should call sign with correct values", async () => {
-      const signSpy = jest.spyOn(jwt, "sign");
       await sut.encrypt(mockUser().id);
-      expect(signSpy).toHaveBeenCalledWith({ sub: mockUser().id }, SECRET_KEY, {
-        expiresIn: EXPIRE_DATE,
-      });
+      expect(mockJwt.sign).toHaveBeenCalledWith(
+        { sub: mockUser().id },
+        SECRET_KEY,
+        {
+          expiresIn: EXPIRE_DATE,
+        }
+      );
     });
 
     it("Should return a valid token on sign success", async () => {
@@ -44,7 +47,7 @@ describe("Jwt Adapter", () => {
     });
 
     it("Should throw if sign throws", async () => {
-      jest.spyOn(jwt, "sign").mockImplementationOnce(() => {
+      mockJwt.sign.mockImplementationOnce(() => {
         throw new Error();
       });
       const promise = sut.encrypt(mockUser().id);
@@ -54,9 +57,11 @@ describe("Jwt Adapter", () => {
 
   describe("verify()", () => {
     it("Should call verify with correct values", async () => {
-      const verifySpy = jest.spyOn(jwt, "verify");
       await sut.decrypt(mockAuthUser().token);
-      expect(verifySpy).toHaveBeenCalledWith(mockAuthUser().token, SECRET_KEY);
+      expect(mockJwt.verify).toHaveBeenCalledWith(
+        mockAuthUser().token,
+        SECRET_KEY
+      );
     });
 
     it("Should return null if verify returns null", async () => {
@@ -66,7 +71,7 @@ describe("Jwt Adapter", () => {
     });
 
     it("Should throws if verify throws", async () => {
-      jest.spyOn(jwt, "verify").mockImplementationOnce(() => {
+      mockJwt.verify.mockImplementationOnce(() => {
         throw new Error();
       });
       const promise = sut.decrypt("invalid_token");

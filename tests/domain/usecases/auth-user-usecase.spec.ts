@@ -42,54 +42,51 @@ describe("AuthUser UseCase", () => {
   });
 
   it("Should call UserRepository.findByEmail with correct email ", async () => {
-    const findByEmailSpy = jest.spyOn(mockUserRepository, "findByEmail");
     await sut.execute(mockAuthUserParams());
-    expect(findByEmailSpy).toHaveBeenCalledWith(mockAuthUserParams().email);
+    expect(mockUserRepository.findByEmail).toHaveBeenCalledWith(
+      mockAuthUserParams().email
+    );
   });
 
   it("Should return null if UserRepository.findByEmail return null", async () => {
-    jest.spyOn(mockUserRepository, "findByEmail").mockResolvedValueOnce(null);
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
     const user = await sut.execute(mockAuthUserParams());
     expect(user).toBeNull();
   });
 
   it("Should throws if UserRepository.findByEmail throws ", async () => {
-    jest
-      .spyOn(mockUserRepository, "findByEmail")
-      .mockRejectedValueOnce(new Error());
+    mockUserRepository.findByEmail.mockRejectedValueOnce(new Error());
     const promise = sut.execute(mockAuthUserParams());
     await expect(promise).rejects.toThrow();
   });
 
   it("Should call HashComparer with correct values", async () => {
-    const compareSpy = jest.spyOn(mockHashComparer, "compare");
     await sut.execute(mockAuthUserParams());
-    expect(compareSpy).toHaveBeenCalledWith(
+    expect(mockHashComparer.compare).toHaveBeenCalledWith(
       mockAuthUserParams().password,
       mockUser().password
     );
   });
 
   it("Should throws if HashComparer throws", async () => {
-    jest.spyOn(mockHashComparer, "compare").mockRejectedValueOnce(new Error());
+    mockHashComparer.compare.mockRejectedValueOnce(new Error());
     const promise = sut.execute(mockAuthUserParams());
     await expect(promise).rejects.toThrow();
   });
 
   it("Should return null if HashComparer returns false", async () => {
-    jest.spyOn(mockHashComparer, "compare").mockResolvedValueOnce(false);
+    mockHashComparer.compare.mockResolvedValueOnce(false);
     const user = await sut.execute(mockAuthUserParams());
     expect(user).toBeNull();
   });
 
   it("Should call Encrypter with correct id", async () => {
-    const encryptSpy = jest.spyOn(mockEncrypter, "encrypt");
     await sut.execute(mockAuthUserParams());
-    expect(encryptSpy).toHaveBeenCalledWith(mockUser().id);
+    expect(mockEncrypter.encrypt).toHaveBeenCalledWith(mockUser().id);
   });
 
   it("Should throw if Encrypter throws", async () => {
-    jest.spyOn(mockEncrypter, "encrypt").mockRejectedValueOnce(new Error());
+    mockEncrypter.encrypt.mockRejectedValueOnce(new Error());
     const promise = sut.execute(mockAuthUserParams());
     await expect(promise).rejects.toThrow();
   });

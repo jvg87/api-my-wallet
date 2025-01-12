@@ -1,12 +1,5 @@
 import { GetUserUseCase } from "@/domain/usecases";
-import {
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { beforeAll, beforeEach, describe, expect, it } from "@jest/globals";
 
 import {
   mockDetailUser,
@@ -26,21 +19,18 @@ describe("GetUser UseCase", () => {
   });
 
   it("Should call UserRepository.getById with correct id", async () => {
-    const getByIdSpy = jest.spyOn(mockUserRepository, "getById");
     await sut.execute(mockUser().id);
-    expect(getByIdSpy).toHaveBeenCalledWith(mockUser().id);
+    expect(mockUserRepository.getById).toHaveBeenCalledWith(mockUser().id);
   });
 
   it("Should return null if UserRepository.getById return null", async () => {
-    jest.spyOn(mockUserRepository, "getById").mockResolvedValueOnce(null);
+    mockUserRepository.getById.mockResolvedValueOnce(null);
     const user = await sut.execute(mockUser().id);
     expect(user).toBeNull();
   });
 
   it("Should throws if UserRepository.getById throws ", async () => {
-    jest
-      .spyOn(mockUserRepository, "getById")
-      .mockRejectedValueOnce(new Error());
+    mockUserRepository.getById.mockRejectedValueOnce(new Error());
     const promise = sut.execute(mockUser().id);
     await expect(promise).rejects.toThrow();
   });

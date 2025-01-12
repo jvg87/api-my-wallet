@@ -71,15 +71,13 @@ describe("AuthUser Controller", () => {
   });
 
   it("Should return 401 if invalid credentials are provided", async () => {
-    jest.spyOn(mockAuthUserUseCase, "execute").mockResolvedValueOnce(null);
+    mockAuthUserUseCase.execute.mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(unauthorized(new UnauthorizedError()));
   });
 
   it("Should returns 500 if AuthUser throws", async () => {
-    jest
-      .spyOn(mockAuthUserUseCase, "execute")
-      .mockRejectedValueOnce(new ServerError());
+    mockAuthUserUseCase.execute.mockRejectedValueOnce(new ServerError());
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(serverError(new ServerError()));
   });

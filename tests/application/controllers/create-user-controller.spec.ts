@@ -39,17 +39,17 @@ describe("CreateUser Controller", () => {
     password: "hashed_password",
   };
 
-  const createUserMock: jest.Mocked<ICreateUser> = {
+  const mockCreateUser: jest.Mocked<ICreateUser> = {
     execute: jest.fn(),
   };
   let sut: CreateUserController;
 
   beforeAll(() => {
-    createUserMock.execute.mockResolvedValue(user);
+    mockCreateUser.execute.mockResolvedValue(user);
   });
 
   beforeEach(() => {
-    sut = new CreateUserController(createUserMock);
+    sut = new CreateUserController(mockCreateUser);
   });
 
   it("Should return 400 if no name is provided", async () => {
@@ -85,13 +85,11 @@ describe("CreateUser Controller", () => {
 
   it("Should call CreteUser with correct values", async () => {
     await sut.handle(request);
-    const executeSpy = jest.spyOn(createUserMock, "execute");
-    expect(executeSpy).toHaveBeenCalledTimes(1);
-    expect(executeSpy).toHaveBeenCalledWith(request.body);
+    expect(mockCreateUser.execute).toHaveBeenCalledWith(request.body);
   });
 
   it("Should return 409 if CreateUser returns null", async () => {
-    jest.spyOn(createUserMock, "execute").mockResolvedValueOnce(null);
+    mockCreateUser.execute.mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(conflict(new EmailAlreadyExistsError()));
   });
@@ -102,9 +100,7 @@ describe("CreateUser Controller", () => {
   });
 
   it("Should returns 500 if CreateUser throws", async () => {
-    jest
-      .spyOn(createUserMock, "execute")
-      .mockRejectedValueOnce(new ServerError());
+    mockCreateUser.execute.mockRejectedValueOnce(new ServerError());
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(serverError(new ServerError()));
   });
