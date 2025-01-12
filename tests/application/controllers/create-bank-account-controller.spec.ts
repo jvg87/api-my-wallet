@@ -11,9 +11,15 @@ import { CreateBankAccountController } from "@/application/controllers";
 import {
   InvalidParamsError,
   MissingParamsError,
+  ServerError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, created, unauthorized } from "@/application/helpers";
+import {
+  badRequest,
+  created,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
 import { ICreateBankAccount } from "@/domain/protocols";
@@ -116,5 +122,11 @@ describe("CreateBankAccount Controller", () => {
   it("Should return 201 if valid data is provided", async () => {
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(created());
+  });
+
+  it("Should returns 500 if CreateBankAccount throws", async () => {
+    mockCreateBankAccount.execute.mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
