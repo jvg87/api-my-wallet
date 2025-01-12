@@ -15,7 +15,7 @@ export const expressMiddlewareAdapter = (
       return;
     }
 
-    req.userId = body?.data.userId;
+    req.userId = body?.userId;
     next();
   };
 };

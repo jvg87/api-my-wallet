@@ -25,9 +25,7 @@ describe("ExpressMiddlewareAdapter", () => {
     mockMiddleware.handle.mockResolvedValue({
       statusCode: 200,
       body: {
-        data: {
-          userId: "user_id",
-        },
+        userId: "user_id",
       },
     });
 
