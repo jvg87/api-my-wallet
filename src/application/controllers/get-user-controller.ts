@@ -1,5 +1,5 @@
 import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { ok, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -14,10 +14,8 @@ export class GetUserController implements IController {
 
     if (!userId) return unauthorized(new UnauthorizedError());
 
-    await this.getUser.execute(userId);
+    const user = await this.getUser.execute(userId);
 
-    return {
-      statusCode: 1,
-    };
+    return ok(user);
   }
 }
