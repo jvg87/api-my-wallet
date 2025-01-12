@@ -8,8 +8,12 @@ import {
 } from "@jest/globals";
 
 import { CreateBankAccountController } from "@/application/controllers";
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import {
+  InvalidParamsError,
+  MissingParamsError,
+  UnauthorizedError,
+} from "@/application/erros";
+import { badRequest, created, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
 import { ICreateBankAccount } from "@/domain/protocols";
@@ -18,7 +22,7 @@ describe("CreateBankAccount Controller", () => {
   const request: IHttpRequest = {
     body: {
       name: "any_name",
-      initialBalance: 0,
+      initialBalance: 1000,
       color: "any_color",
       type: "CHECKING",
     },
@@ -35,7 +39,7 @@ describe("CreateBankAccount Controller", () => {
     mockCreateBankAccount.execute.mockResolvedValue({
       id: "bank_account_id",
       name: "any_name",
-      initialBalance: 0,
+      initialBalance: 1000,
       color: "any_color",
       type: BankAccountType.CHECKING,
     });
@@ -94,5 +98,23 @@ describe("CreateBankAccount Controller", () => {
       userId: "user_id",
     });
     expect(httpResponse).toEqual(badRequest(new MissingParamsError("type")));
+  });
+
+  it("Should return 400 if type provided is not valid", async () => {
+    const httpResponse = await sut.handle({
+      body: {
+        name: "any_name",
+        initialBalance: 100,
+        color: "any_color",
+        type: "any_type",
+      },
+      userId: "user_id",
+    });
+    expect(httpResponse).toEqual(badRequest(new InvalidParamsError("type")));
+  });
+
+  it("Should return 201 if valid data is provided", async () => {
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(created());
   });
 });
