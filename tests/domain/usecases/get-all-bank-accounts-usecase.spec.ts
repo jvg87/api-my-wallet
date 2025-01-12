@@ -38,4 +38,32 @@ describe("GetAllBankAccounts UseCase", () => {
       userId
     );
   });
+
+  it("Should throws if UserRepository.getById throws ", async () => {
+    mockBankAccountRepository.findAllByUserId.mockRejectedValueOnce(
+      new Error()
+    );
+    const promise = sut.execute(userId);
+    await expect(promise).rejects.toThrow();
+  });
+
+  it("Should return a list of bank accounts on success", async () => {
+    const response = await sut.execute(userId);
+    expect(response).toEqual([
+      {
+        color: "any_color",
+        id: "any_id",
+        name: "any_name",
+        initialBalance: 1000,
+        type: BankAccountType.CASH,
+      },
+      {
+        color: "other_color",
+        id: "other_id",
+        name: "other_name",
+        initialBalance: 100,
+        type: BankAccountType.CHECKING,
+      },
+    ]);
+  });
 });
