@@ -8,8 +8,8 @@ import {
 } from "@jest/globals";
 
 import { GetUserController } from "@/application/controllers";
-import { UnauthorizedError } from "@/application/erros";
-import { ok, unauthorized } from "@/application/helpers";
+import { ServerError, UnauthorizedError } from "@/application/erros";
+import { ok, serverError, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IGetUser } from "@/domain/protocols";
 
@@ -54,5 +54,11 @@ describe("GetUser Controller", () => {
     const response = await sut.handle(request);
     const user = await mockGetUser.execute("user_id");
     expect(response).toEqual(ok(user));
+  });
+
+  it("Should returns 500 if GetUser throws", async () => {
+    mockGetUser.execute.mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
