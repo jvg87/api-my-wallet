@@ -46,4 +46,23 @@ describe("CreateBankAccount UseCase", () => {
       bankAccountParams
     );
   });
+
+  it("Should throw if UserRepository.create throws", async () => {
+    mockBankAccountRepository.create.mockRejectedValueOnce(
+      new Error("any_error")
+    );
+    const promise = sut.execute(bankAccountParams);
+    await expect(promise).rejects.toThrow(new Error("any_error"));
+  });
+
+  it("Should return a new bank account if success", async () => {
+    const bankAccount = await sut.execute(bankAccountParams);
+    expect(bankAccount).toEqual({
+      id: "any_id",
+      color: "any_color",
+      initialBalance: 0,
+      name: "any_name",
+      type: BankAccountType.CHECKING,
+    });
+  });
 });
