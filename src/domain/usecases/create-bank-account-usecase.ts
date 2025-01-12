@@ -1,8 +1,4 @@
-import {
-  BankAccount,
-  BankAccountParams,
-  BankAccountType,
-} from "@/domain/entities";
+import { BankAccount, BankAccountParams } from "@/domain/entities";
 import { IBankAccountRepository, ICreateBankAccount } from "@/domain/protocols";
 
 export class CreateBankAccountUseCase implements ICreateBankAccount {
@@ -14,7 +10,7 @@ export class CreateBankAccountUseCase implements ICreateBankAccount {
 
     if (!userId) return null;
 
-    await this.bankAccountRepository.create({
+    const bankAccount = await this.bankAccountRepository.create({
       userId,
       color,
       initialBalance,
@@ -22,12 +18,6 @@ export class CreateBankAccountUseCase implements ICreateBankAccount {
       type,
     });
 
-    return {
-      id: "",
-      color: "",
-      initialBalance: 0,
-      name: "",
-      type: BankAccountType.CASH,
-    };
+    return bankAccount;
   }
 }
