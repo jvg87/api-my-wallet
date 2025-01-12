@@ -22,4 +22,16 @@ export class PrismaBankAccountRepository implements IBankAccountRepository {
       type: bankAccount.type as BankAccountType,
     };
   }
+
+  async findAllByUserId(userId: string): Promise<BankAccount[] | null> {
+    const bankAccounts = await prisma.bankAccount.findMany({
+      where: {
+        userId,
+      },
+    });
+    return bankAccounts.map((bankAccount) => ({
+      ...bankAccount,
+      type: bankAccount.type as BankAccountType,
+    }));
+  }
 }
