@@ -9,7 +9,7 @@ import {
 
 import { GetUserController } from "@/application/controllers";
 import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { ok, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IGetUser } from "@/domain/protocols";
 
@@ -48,5 +48,11 @@ describe("GetUser Controller", () => {
     await sut.handle(request);
     const spy = jest.spyOn(mockGetUser, "execute");
     expect(spy).toHaveBeenCalledWith("user_id");
+  });
+
+  it("Should return 200 if valid id is provided", async () => {
+    const response = await sut.handle(request);
+    const user = await mockGetUser.execute("user_id");
+    expect(response).toEqual(ok(user));
   });
 });
