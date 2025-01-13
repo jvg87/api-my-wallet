@@ -46,7 +46,7 @@ describe("GetAllBankAccounts Controller", () => {
   });
 
   beforeEach(() => {
-    sut = new GetAllBankAccountsController();
+    sut = new GetAllBankAccountsController(mockGetAllBankAccounts);
   });
 
   it("Should return 401 if no user id is provided", async () => {
@@ -55,5 +55,10 @@ describe("GetAllBankAccounts Controller", () => {
       userId: "",
     });
     expect(httpResponse).toEqual(unauthorized(new UnauthorizedError()));
+  });
+
+  it("Should call GetAllBankAccounts method with correct id", async () => {
+    await sut.handle(request);
+    expect(mockGetAllBankAccounts.execute).toHaveBeenCalledWith("user_id");
   });
 });
