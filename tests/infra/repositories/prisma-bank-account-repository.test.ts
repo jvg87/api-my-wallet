@@ -1,19 +1,10 @@
 import { BankAccountType } from "@/domain/entities";
 import { PrismaBankAccountRepository } from "@/infra/repositories";
 import { prisma } from "@/utils";
-import {
-  afterAll,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-} from "@jest/globals";
+import { afterAll, beforeEach, describe, expect, it } from "@jest/globals";
 
 describe("PrismaBankAccount Repository", () => {
   let sut: PrismaBankAccountRepository;
-
-  beforeAll(() => {});
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -78,6 +69,31 @@ describe("PrismaBankAccount Repository", () => {
 
       expect(listAccount).toBeTruthy();
       expect(listAccount).toBeInstanceOf(Array);
+    });
+  });
+
+  describe("findById()", () => {
+    it("Should return a bank account", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "any_email@mail.com",
+          name: "any_name",
+          password: "any_password",
+        },
+      });
+
+      const bankAccount = await sut.create({
+        name: "account_1",
+        color: "any_color",
+        initialBalance: 0,
+        type: BankAccountType.CASH,
+        userId: user.id,
+      });
+
+      const findBankAccount = await sut.findById(bankAccount?.id as string);
+
+      expect(findBankAccount).toBeTruthy();
+      expect(findBankAccount?.id).toBeTruthy();
     });
   });
 });

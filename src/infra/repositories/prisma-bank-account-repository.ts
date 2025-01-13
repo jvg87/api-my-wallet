@@ -34,4 +34,20 @@ export class PrismaBankAccountRepository implements IBankAccountRepository {
       type: bankAccount.type as BankAccountType,
     }));
   }
+
+  async findById(id: string): Promise<BankAccount | null> {
+    const bankAccount = await prisma.bankAccount.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return {
+      id: bankAccount?.id as string,
+      color: bankAccount?.color as string,
+      initialBalance: bankAccount?.initialBalance as number,
+      name: bankAccount?.name as string,
+      type: bankAccount?.type as BankAccountType,
+    };
+  }
 }
