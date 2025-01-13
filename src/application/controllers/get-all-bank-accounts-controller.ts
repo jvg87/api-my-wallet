@@ -1,5 +1,5 @@
 import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { ok, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -14,9 +14,8 @@ export class GetAllBankAccountsController implements IController {
 
     if (!userId) return unauthorized(new UnauthorizedError());
 
-    await this.getAllBankAccounts.execute(userId);
-    return {
-      statusCode: 1,
-    };
+    const bankAccounts = await this.getAllBankAccounts.execute(userId);
+
+    return ok(bankAccounts);
   }
 }
