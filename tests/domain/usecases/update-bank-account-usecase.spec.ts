@@ -26,4 +26,10 @@ describe("UpdateBankAccount UseCase", () => {
       bankAccountId
     );
   });
+
+  it("Should return null if no bank account is found", async () => {
+    mockBankAccountRepository.findById.mockResolvedValueOnce(null);
+    const response = await sut.execute(bankAccountId, bankAccountParams);
+    expect(response).toBeNull();
+  });
 });
