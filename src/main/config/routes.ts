@@ -4,6 +4,7 @@ import {
   authUserRoutes,
   createBankAccountRoute,
   createUserRoute,
+  getAllBankAccountsRoute,
   getUserRoute,
 } from "@/main/routes";
 
@@ -14,4 +15,5 @@ export const setupRoutes = (app: Express): void => {
   authUserRoutes(router);
   getUserRoute(router);
   createBankAccountRoute(router);
+  getAllBankAccountsRoute(router);
 };
