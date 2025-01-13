@@ -8,8 +8,8 @@ import {
 } from "@jest/globals";
 
 import { GetAllBankAccountsController } from "@/application/controllers";
-import { UnauthorizedError } from "@/application/erros";
-import { ok, unauthorized } from "@/application/helpers";
+import { ServerError, UnauthorizedError } from "@/application/erros";
+import { ok, serverError, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
 import { IGetAllBankAccounts } from "@/domain/protocols";
@@ -67,5 +67,11 @@ describe("GetAllBankAccounts Controller", () => {
     const bankAccounts =
       await mockGetAllBankAccounts.execute("bankAccounts_id");
     expect(response).toEqual(ok(bankAccounts));
+  });
+
+  it("Should returns 500 if GetAllBankAccounts throws", async () => {
+    mockGetAllBankAccounts.execute.mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
