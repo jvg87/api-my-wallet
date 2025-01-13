@@ -7,7 +7,10 @@ export class UpdateBankAccountUseCase implements IUpdateBankAccount {
     bankAccountId: string,
     bankAccountParams: BankAccountParams
   ): Promise<BankAccount | null> {
-    await this.bankAccountRepository.findById(bankAccountId);
+    const bankAccount =
+      await this.bankAccountRepository.findById(bankAccountId);
+
+    if (!bankAccount) return null;
 
     return {
       ...bankAccountParams,
