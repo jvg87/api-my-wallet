@@ -9,7 +9,7 @@ import {
 
 import { GetAllBankAccountsController } from "@/application/controllers";
 import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { ok, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
 import { IGetAllBankAccounts } from "@/domain/protocols";
@@ -60,5 +60,12 @@ describe("GetAllBankAccounts Controller", () => {
   it("Should call GetAllBankAccounts method with correct id", async () => {
     await sut.handle(request);
     expect(mockGetAllBankAccounts.execute).toHaveBeenCalledWith("user_id");
+  });
+
+  it("Should return 200 if valid id is provided", async () => {
+    const response = await sut.handle(request);
+    const bankAccounts =
+      await mockGetAllBankAccounts.execute("bankAccounts_id");
+    expect(response).toEqual(ok(bankAccounts));
   });
 });
