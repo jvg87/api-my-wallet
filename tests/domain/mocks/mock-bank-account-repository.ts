@@ -6,4 +6,5 @@ export const mockBankAccountRepository: jest.Mocked<IBankAccountRepository> = {
   create: jest.fn(),
   findAllByUserId: jest.fn(),
   findById: jest.fn(),
+  update: jest.fn(),
 };

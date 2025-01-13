@@ -50,4 +50,27 @@ export class PrismaBankAccountRepository implements IBankAccountRepository {
       type: bankAccount?.type as BankAccountType,
     };
   }
+
+  async update(
+    bankAccountId: string,
+    data: BankAccountParams
+  ): Promise<BankAccount | null> {
+    const bankAccount = await prisma.bankAccount.update({
+      where: {
+        id: bankAccountId,
+        userId: data.userId,
+      },
+      data: {
+        color: data.color,
+        initialBalance: data.initialBalance,
+        name: data.name,
+        type: data.type,
+      },
+    });
+
+    return {
+      ...bankAccount,
+      type: bankAccount.type as BankAccountType,
+    };
+  }
 }
