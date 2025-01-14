@@ -10,8 +10,10 @@ import {
   IHttpResponse,
 } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
+import { IUpdateBankAccount } from "@/domain/protocols";
 
 export class UpdateBankAccountController implements IController {
+  constructor(private readonly updateBankAccount: IUpdateBankAccount) {}
   async handle(request: IHttpRequest): Promise<IHttpResponse> {
     const userId = request.userId;
 
@@ -39,6 +41,14 @@ export class UpdateBankAccountController implements IController {
       type !== BankAccountType.INVESTMENT
     )
       return badRequest(new InvalidParamsError("type"));
+
+    await this.updateBankAccount.execute(bankAccountId, {
+      color,
+      initialBalance,
+      name,
+      type,
+      userId,
+    });
 
     return {
       statusCode: 1,
