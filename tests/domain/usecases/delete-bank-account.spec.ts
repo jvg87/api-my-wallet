@@ -1,6 +1,8 @@
-import { beforeEach, describe, it } from "@jest/globals";
+import { beforeAll, beforeEach, describe, expect, it } from "@jest/globals";
 
+import { BankAccountType } from "@/domain/entities";
 import { DeleteBankAccountUseCase } from "@/domain/usecases";
+import { mockBankAccountRepository } from "@/tests/domain/mocks";
 
 describe("DeleteBankAccount UseCase", () => {
   const userId = "any_user_id";
@@ -8,8 +10,24 @@ describe("DeleteBankAccount UseCase", () => {
 
   let sut: DeleteBankAccountUseCase;
 
-  beforeEach(() => {
-    sut = new DeleteBankAccountUseCase();
+  beforeAll(() => {
+    mockBankAccountRepository.findById.mockResolvedValue({
+      id: bankAccountId,
+      color: "any_color",
+      initialBalance: 0,
+      name: "any_name",
+      type: BankAccountType.CHECKING,
+    });
   });
-  it("Should call UserRepository.delete with correct values", async () => {});
+
+  beforeEach(() => {
+    sut = new DeleteBankAccountUseCase(mockBankAccountRepository);
+  });
+
+  it("Should call UserRepository.findById with correct values", async () => {
+    await sut.execute(bankAccountId, userId);
+    expect(mockBankAccountRepository.findById).toHaveBeenCalledWith(
+      bankAccountId
+    );
+  });
 });
