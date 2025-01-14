@@ -4,6 +4,7 @@ import { expressMiddlewareAdapter, expressRouteAdapter } from "@/main/adapters";
 import {
   makeCreateBankAccountController,
   makeGetAllBankAccountsController,
+  makeUpdateBankAccountController,
 } from "@/main/factories";
 import { makeAuthMiddleware } from "@/main/factories/middlewares";
 
@@ -18,5 +19,11 @@ export const bankAccountRoute = (router: Router) => {
     "/bank-accounts",
     expressMiddlewareAdapter(makeAuthMiddleware()),
     expressRouteAdapter(makeGetAllBankAccountsController())
+  );
+
+  router.put(
+    "/bank-accounts/:bankAccountId",
+    expressMiddlewareAdapter(makeAuthMiddleware()),
+    expressRouteAdapter(makeUpdateBankAccountController())
   );
 };
