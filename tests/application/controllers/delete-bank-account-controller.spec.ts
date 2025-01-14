@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import { DeleteBankAccountController } from "@/application/controllers";
-import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { MissingParamsError, UnauthorizedError } from "@/application/erros";
+import { badRequest, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IDeleteBankAccount } from "@/domain/protocols";
 
@@ -32,5 +32,18 @@ describe("DeleteBankAccount Controller", () => {
       params: {},
     });
     expect(httpResponse).toEqual(unauthorized(new UnauthorizedError()));
+  });
+
+  it("Should return 400 if no bankAccountId is provided", async () => {
+    const httpResponse = await sut.handle({
+      body: {},
+      userId: "user_id",
+      params: {
+        bankAccountId: "",
+      },
+    });
+    expect(httpResponse).toEqual(
+      badRequest(new MissingParamsError("bankAccountId"))
+    );
   });
 });
