@@ -1,4 +1,8 @@
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
+import {
+  InvalidParamsError,
+  MissingParamsError,
+  UnauthorizedError,
+} from "@/application/erros";
 import { badRequest, unauthorized } from "@/application/helpers";
 import {
   IController,
@@ -23,6 +27,13 @@ export class UpdateBankAccountController implements IController {
     });
 
     if (missingParam) return badRequest(new MissingParamsError(missingParam));
+
+    if (
+      type !== BankAccountType.CASH &&
+      type !== BankAccountType.CHECKING &&
+      type !== BankAccountType.INVESTMENT
+    )
+      return badRequest(new InvalidParamsError("type"));
 
     return {
       statusCode: 1,
