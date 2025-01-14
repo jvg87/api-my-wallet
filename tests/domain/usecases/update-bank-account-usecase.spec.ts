@@ -71,4 +71,15 @@ describe("UpdateBankAccount UseCase", () => {
     const promise = sut.execute(bankAccountId, bankAccountParams);
     await expect(promise).rejects.toThrow();
   });
+
+  it("Should return the updated bank account on success", async () => {
+    const response = await sut.execute(bankAccountId, bankAccountParams);
+    expect(response).toEqual({
+      id: bankAccountId,
+      color: "update_color",
+      initialBalance: 0,
+      name: "update_name",
+      type: BankAccountType.CHECKING,
+    });
+  });
 });
