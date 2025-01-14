@@ -1,5 +1,5 @@
 import { UpdateBankAccountController } from "@/application/controllers";
-import { makeUpdateBankAccountUseCase } from "../../domain";
+import { makeUpdateBankAccountUseCase } from "@/main/factories/domain";
 
 export const makeUpdateBankAccountController =
   (): UpdateBankAccountController => {
