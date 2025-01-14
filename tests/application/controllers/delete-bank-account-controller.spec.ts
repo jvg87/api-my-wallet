@@ -1,8 +1,12 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 import { DeleteBankAccountController } from "@/application/controllers";
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import {
+  MissingParamsError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@/application/erros";
+import { badRequest, notFound, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IDeleteBankAccount } from "@/domain/protocols";
 
@@ -53,5 +57,11 @@ describe("DeleteBankAccount Controller", () => {
       "bank_account_id",
       "user_id"
     );
+  });
+
+  it("Should return 404 if DeleteBankAccount returns null", async () => {
+    mockDeleteAccount.execute.mockResolvedValueOnce(null);
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(notFound(new NotFoundError()));
   });
 });
