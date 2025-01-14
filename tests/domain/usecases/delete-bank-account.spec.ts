@@ -50,4 +50,10 @@ describe("DeleteBankAccount UseCase", () => {
       userId
     );
   });
+
+  it("Should throws if UserRepository.delete throws ", async () => {
+    mockBankAccountRepository.delete.mockRejectedValueOnce(new Error());
+    const promise = sut.execute(bankAccountId, userId);
+    await expect(promise).rejects.toThrow();
+  });
 });
