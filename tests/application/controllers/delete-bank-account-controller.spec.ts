@@ -9,6 +9,7 @@ import {
 } from "@/application/erros";
 import {
   badRequest,
+  noContent,
   notFound,
   serverError,
   unauthorized,
@@ -66,7 +67,7 @@ describe("DeleteBankAccount Controller", () => {
   });
 
   it("Should return 404 if DeleteBankAccount returns null", async () => {
-    mockDeleteAccount.execute.mockResolvedValueOnce(null);
+    mockDeleteAccount.execute.mockResolvedValueOnce(false);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(notFound(new NotFoundError()));
   });
@@ -75,5 +76,11 @@ describe("DeleteBankAccount Controller", () => {
     mockDeleteAccount.execute.mockRejectedValueOnce(new ServerError());
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(serverError(new ServerError()));
+  });
+
+  it("Should return 204 on success", async () => {
+    mockDeleteAccount.execute.mockResolvedValueOnce(true);
+    const response = await sut.handle(request);
+    expect(response).toEqual(noContent());
   });
 });
