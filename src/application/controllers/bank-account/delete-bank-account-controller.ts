@@ -1,5 +1,5 @@
-import { UnauthorizedError } from "@/application/erros";
-import { unauthorized } from "@/application/helpers";
+import { MissingParamsError, UnauthorizedError } from "@/application/erros";
+import { badRequest, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -11,6 +11,11 @@ export class DeleteBankAccountController implements IController {
     const userId = request.userId;
 
     if (!userId) return unauthorized(new UnauthorizedError());
+
+    const bankAccountId = request.params?.bankAccountId;
+
+    if (!bankAccountId)
+      return badRequest(new MissingParamsError("bankAccountId"));
 
     return { statusCode: 1 };
   }
