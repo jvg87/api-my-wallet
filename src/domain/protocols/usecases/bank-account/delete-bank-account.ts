@@ -1,3 +1,3 @@
 export interface IDeleteBankAccount {
-  execute(bankAccountId: string, userId: string): Promise<void>;
+  execute(bankAccountId: string, userId: string): Promise<void | null>;
 }
