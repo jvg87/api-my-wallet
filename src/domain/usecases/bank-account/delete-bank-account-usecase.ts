@@ -7,6 +7,9 @@ export class DeleteBankAccountUseCase implements IDeleteBankAccount {
       await this.bankAccountRepository.findById(bankAccountId);
 
     if (!bankAccount) return null;
+
+    await this.bankAccountRepository.delete(bankAccountId, userId);
+
     return;
   }
 }
