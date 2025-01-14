@@ -4,9 +4,15 @@ import { DeleteBankAccountController } from "@/application/controllers";
 import {
   MissingParamsError,
   NotFoundError,
+  ServerError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, notFound, unauthorized } from "@/application/helpers";
+import {
+  badRequest,
+  notFound,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { IDeleteBankAccount } from "@/domain/protocols";
 
@@ -63,5 +69,11 @@ describe("DeleteBankAccount Controller", () => {
     mockDeleteAccount.execute.mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(notFound(new NotFoundError()));
+  });
+
+  it("Should return 500 if DeleteBankAccount throws", async () => {
+    mockDeleteAccount.execute.mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
