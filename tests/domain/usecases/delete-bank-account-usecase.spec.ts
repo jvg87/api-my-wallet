@@ -31,10 +31,10 @@ describe("DeleteBankAccount UseCase", () => {
     );
   });
 
-  it("Should return null if no bank account is found", async () => {
+  it("Should return false if no bank account is found", async () => {
     mockBankAccountRepository.findById.mockResolvedValueOnce(null);
     const response = await sut.execute(bankAccountId, userId);
-    expect(response).toBeNull();
+    expect(response).toBeFalsy();
   });
 
   it("Should throws if UserRepository.findById throws ", async () => {
@@ -55,5 +55,10 @@ describe("DeleteBankAccount UseCase", () => {
     mockBankAccountRepository.delete.mockRejectedValueOnce(new Error());
     const promise = sut.execute(bankAccountId, userId);
     await expect(promise).rejects.toThrow();
+  });
+
+  it("Should returns true on success", async () => {
+    const response = await sut.execute(bankAccountId, userId);
+    expect(response).toBeTruthy();
   });
 });
