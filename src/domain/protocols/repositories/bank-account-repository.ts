@@ -8,4 +8,5 @@ export interface IBankAccountRepository {
     bankAccountId: string,
     data: BankAccountParams
   ): Promise<BankAccount | null>;
+  delete(bankAccountId: string, userId: string): Promise<void>;
 }

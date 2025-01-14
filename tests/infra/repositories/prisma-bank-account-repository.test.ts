@@ -128,4 +128,30 @@ describe("PrismaBankAccount Repository", () => {
       expect(updateBankAccount?.name).toBe("bank_2");
     });
   });
+
+  describe("delete()", () => {
+    it("Should delete a bank account", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "any_email@mail.com",
+          name: "any_name",
+          password: "any_password",
+        },
+      });
+
+      const bankAccount = await sut.create({
+        name: "bank_1",
+        color: "any_color",
+        initialBalance: 0,
+        type: BankAccountType.CASH,
+        userId: user.id,
+      });
+
+      await sut.delete(bankAccount?.id as string, user.id);
+
+      const listAccount = await sut.findAllByUserId(user.id);
+
+      expect(listAccount?.[0]).toBeUndefined();
+    });
+  });
 });

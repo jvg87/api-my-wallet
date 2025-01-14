@@ -73,4 +73,13 @@ export class PrismaBankAccountRepository implements IBankAccountRepository {
       type: bankAccount.type as BankAccountType,
     };
   }
+
+  async delete(bankAccountId: string, userId: string): Promise<void> {
+    await prisma.bankAccount.delete({
+      where: {
+        id: bankAccountId,
+        userId,
+      },
+    });
+  }
 }
