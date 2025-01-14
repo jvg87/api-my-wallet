@@ -27,6 +27,9 @@ describe("UpdateBankAccount Controller", () => {
       type: "CHECKING",
     },
     userId: "user_id",
+    params: {
+      bankAccountId: "bank_account_id",
+    },
   };
 
   const mockUpdateBankAccount: jest.Mocked<IUpdateBankAccount> = {
@@ -37,7 +40,7 @@ describe("UpdateBankAccount Controller", () => {
 
   beforeAll(() => {
     mockUpdateBankAccount.execute.mockResolvedValue({
-      id: "update_bank_account_id",
+      id: "bank_account_id",
       name: "update_name",
       initialBalance: 1000,
       color: "update_color",
@@ -53,14 +56,36 @@ describe("UpdateBankAccount Controller", () => {
     const httpResponse = await sut.handle({
       body: {},
       userId: "",
+      params: {},
     });
     expect(httpResponse).toEqual(unauthorized(new UnauthorizedError()));
+  });
+
+  it("Should return 400 if no bankAccountId is provided", async () => {
+    const httpResponse = await sut.handle({
+      body: {
+        name: "any_name",
+        initialBalance: 100,
+        color: "any_color",
+        type: BankAccountType.CHECKING,
+      },
+      userId: "user_id",
+      params: {
+        bankAccountId: "",
+      },
+    });
+    expect(httpResponse).toEqual(
+      badRequest(new MissingParamsError("bankAccountId"))
+    );
   });
 
   it("Should return 400 if no name is provided", async () => {
     const httpResponse = await sut.handle({
       body: {},
       userId: "user_id",
+      params: {
+        bankAccountId: "bank_account_id",
+      },
     });
     expect(httpResponse).toEqual(badRequest(new MissingParamsError("name")));
   });
@@ -71,6 +96,9 @@ describe("UpdateBankAccount Controller", () => {
         name: "any_name",
       },
       userId: "user_id",
+      params: {
+        bankAccountId: "bank_account_id",
+      },
     });
     expect(httpResponse).toEqual(
       badRequest(new MissingParamsError("initialBalance"))
@@ -84,6 +112,9 @@ describe("UpdateBankAccount Controller", () => {
         initialBalance: 100,
       },
       userId: "user_id",
+      params: {
+        bankAccountId: "bank_account_id",
+      },
     });
     expect(httpResponse).toEqual(badRequest(new MissingParamsError("color")));
   });
@@ -96,6 +127,9 @@ describe("UpdateBankAccount Controller", () => {
         color: "any_color",
       },
       userId: "user_id",
+      params: {
+        bankAccountId: "bank_account_id",
+      },
     });
     expect(httpResponse).toEqual(badRequest(new MissingParamsError("type")));
   });
@@ -109,6 +143,9 @@ describe("UpdateBankAccount Controller", () => {
         type: "any_type",
       },
       userId: "user_id",
+      params: {
+        bankAccountId: "bank_account_id",
+      },
     });
     expect(httpResponse).toEqual(badRequest(new InvalidParamsError("type")));
   });
