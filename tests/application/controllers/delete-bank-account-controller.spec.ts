@@ -22,7 +22,7 @@ describe("DeleteBankAccount Controller", () => {
   let sut: DeleteBankAccountController;
 
   beforeEach(() => {
-    sut = new DeleteBankAccountController();
+    sut = new DeleteBankAccountController(mockDeleteAccount);
   });
 
   it("Should return 401 if no user id is provided", async () => {
@@ -44,6 +44,14 @@ describe("DeleteBankAccount Controller", () => {
     });
     expect(httpResponse).toEqual(
       badRequest(new MissingParamsError("bankAccountId"))
+    );
+  });
+
+  it("Should call DeleteBankAccount with correct params", async () => {
+    await sut.handle(request);
+    expect(mockDeleteAccount.execute).toHaveBeenCalledWith(
+      "bank_account_id",
+      "user_id"
     );
   });
 });
