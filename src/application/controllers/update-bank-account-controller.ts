@@ -8,6 +8,7 @@ import {
 import {
   badRequest,
   notFound,
+  ok,
   serverError,
   unauthorized,
 } from "@/application/helpers";
@@ -60,9 +61,7 @@ export class UpdateBankAccountController implements IController {
 
       if (!update) return notFound(new NotFoundError());
 
-      return {
-        statusCode: 1,
-      };
+      return ok(update);
     } catch (error) {
       return serverError(error as ServerError);
     }
