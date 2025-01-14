@@ -3,6 +3,7 @@ import { Router } from "express";
 import { expressMiddlewareAdapter, expressRouteAdapter } from "@/main/adapters";
 import {
   makeCreateBankAccountController,
+  makeDeleteBankAccountController,
   makeGetAllBankAccountsController,
   makeUpdateBankAccountController,
 } from "@/main/factories";
@@ -25,5 +26,11 @@ export const bankAccountRoute = (router: Router) => {
     "/bank-accounts/:bankAccountId",
     expressMiddlewareAdapter(makeAuthMiddleware()),
     expressRouteAdapter(makeUpdateBankAccountController())
+  );
+
+  router.delete(
+    "/bank-accounts/:bankAccountId",
+    expressMiddlewareAdapter(makeAuthMiddleware()),
+    expressRouteAdapter(makeDeleteBankAccountController())
   );
 };
