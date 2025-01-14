@@ -12,6 +12,8 @@ export class UpdateBankAccountUseCase implements IUpdateBankAccount {
 
     if (!bankAccount) return null;
 
+    await this.bankAccountRepository.update(bankAccountId, bankAccountParams);
+
     return {
       ...bankAccountParams,
       id: bankAccountId,
