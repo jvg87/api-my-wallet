@@ -18,6 +18,7 @@ import {
 import {
   badRequest,
   notFound,
+  ok,
   serverError,
   unauthorized,
 } from "@/application/helpers";
@@ -181,5 +182,18 @@ describe("UpdateBankAccount Controller", () => {
     mockUpdateBankAccount.execute.mockRejectedValueOnce(new ServerError());
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(serverError(new ServerError()));
+  });
+
+  it("Should return 200 if valid data is provided", async () => {
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(
+      ok({
+        id: "bank_account_id",
+        name: "update_name",
+        initialBalance: 1000,
+        color: "update_color",
+        type: BankAccountType.CHECKING,
+      })
+    );
   });
 });
