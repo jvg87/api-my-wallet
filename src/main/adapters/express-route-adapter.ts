@@ -8,6 +8,7 @@ export const expressRouteAdapter = (
   return async (req, res) => {
     const { statusCode, body } = await controller.handle({
       body: req.body,
+      params: req.params,
       userId: req.userId,
     });
 

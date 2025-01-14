@@ -30,7 +30,8 @@ describe("ExpressRouteAdapter", () => {
     req = {
       body: { key: "string" },
       userId: "user_id",
-    } as Request;
+      params: { key: "string" },
+    } as unknown as Request;
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -48,6 +49,7 @@ describe("ExpressRouteAdapter", () => {
     expect(mockController.handle).toHaveBeenCalledWith({
       body: { key: "string" },
       userId: "user_id",
+      params: { key: "string" },
     });
   });
 

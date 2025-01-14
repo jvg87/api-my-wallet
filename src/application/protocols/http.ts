@@ -1,5 +1,6 @@
 export interface IHttpRequest {
   body: Record<string, any>;
+  params?: Record<string, string>;
   userId?: string;
 }
 
