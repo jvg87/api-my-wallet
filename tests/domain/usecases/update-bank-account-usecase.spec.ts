@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "@jest/globals";
+import { beforeAll, beforeEach, describe, expect, it } from "@jest/globals";
 
 import { BankAccountType } from "@/domain/entities";
 import { UpdateBankAccountUseCase } from "@/domain/usecases";
@@ -17,9 +17,28 @@ describe("UpdateBankAccount UseCase", () => {
 
   let sut: UpdateBankAccountUseCase;
 
+  beforeAll(() => {
+    mockBankAccountRepository.findById.mockResolvedValue({
+      id: bankAccountId,
+      color: "any_color",
+      initialBalance: 0,
+      name: "any_name",
+      type: BankAccountType.CHECKING,
+    });
+
+    mockBankAccountRepository.update.mockResolvedValue({
+      id: bankAccountId,
+      color: "update_color",
+      initialBalance: 0,
+      name: "update_name",
+      type: BankAccountType.CHECKING,
+    });
+  });
+
   beforeEach(() => {
     sut = new UpdateBankAccountUseCase(mockBankAccountRepository);
   });
+
   it("Should call BankAccountRepository.findById with correct id", async () => {
     await sut.execute(bankAccountId, bankAccountParams);
     expect(mockBankAccountRepository.findById).toHaveBeenCalledWith(
@@ -31,5 +50,13 @@ describe("UpdateBankAccount UseCase", () => {
     mockBankAccountRepository.findById.mockResolvedValueOnce(null);
     const response = await sut.execute(bankAccountId, bankAccountParams);
     expect(response).toBeNull();
+  });
+
+  it("Should call BankAccountRepository.update with correct values", async () => {
+    await sut.execute(bankAccountId, bankAccountParams);
+    expect(mockBankAccountRepository.update).toHaveBeenCalledWith(
+      bankAccountId,
+      bankAccountParams
+    );
   });
 });
