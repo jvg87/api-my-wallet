@@ -5,8 +5,10 @@ import {
   IHttpRequest,
   IHttpResponse,
 } from "@/application/protocols";
+import { IDeleteBankAccount } from "@/domain/protocols";
 
 export class DeleteBankAccountController implements IController {
+  constructor(private readonly deleteBankAccount: IDeleteBankAccount) {}
   async handle(request: IHttpRequest): Promise<IHttpResponse> {
     const userId = request.userId;
 
@@ -16,6 +18,8 @@ export class DeleteBankAccountController implements IController {
 
     if (!bankAccountId)
       return badRequest(new MissingParamsError("bankAccountId"));
+
+    await this.deleteBankAccount.execute(bankAccountId, userId);
 
     return { statusCode: 1 };
   }
