@@ -12,9 +12,15 @@ import {
   InvalidParamsError,
   MissingParamsError,
   NotFoundError,
+  ServerError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, notFound, unauthorized } from "@/application/helpers";
+import {
+  badRequest,
+  notFound,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
 import { IUpdateBankAccount } from "@/domain/protocols";
@@ -165,9 +171,15 @@ describe("UpdateBankAccount Controller", () => {
     );
   });
 
-  it("Should return 400 if UpdateBankAccount returns null", async () => {
+  it("Should return 404 if UpdateBankAccount returns null", async () => {
     mockUpdateBankAccount.execute.mockResolvedValueOnce(null);
     const httpResponse = await sut.handle(request);
     expect(httpResponse).toEqual(notFound(new NotFoundError()));
+  });
+
+  it("Should return 500 if UpdateBankAccount throws", async () => {
+    mockUpdateBankAccount.execute.mockRejectedValueOnce(new ServerError());
+    const httpResponse = await sut.handle(request);
+    expect(httpResponse).toEqual(serverError(new ServerError()));
   });
 });
