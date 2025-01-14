@@ -40,3 +40,12 @@ export const ok = (data: any) => {
     body: data,
   };
 };
+
+export const notFound = (error: Error): IHttpResponse => {
+  return {
+    statusCode: 404,
+    body: {
+      error: error.message,
+    },
+  };
+};

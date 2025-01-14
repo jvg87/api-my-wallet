@@ -1,9 +1,10 @@
 import {
   InvalidParamsError,
   MissingParamsError,
+  NotFoundError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import { badRequest, notFound, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -42,13 +43,15 @@ export class UpdateBankAccountController implements IController {
     )
       return badRequest(new InvalidParamsError("type"));
 
-    await this.updateBankAccount.execute(bankAccountId, {
+    const update = await this.updateBankAccount.execute(bankAccountId, {
       color,
       initialBalance,
       name,
       type,
       userId,
     });
+
+    if (!update) return notFound(new NotFoundError());
 
     return {
       statusCode: 1,

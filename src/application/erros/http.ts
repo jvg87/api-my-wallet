@@ -32,3 +32,10 @@ export class UnauthorizedError extends Error {
     this.name = "UnauthorizedError";
   }
 }
+
+export class NotFoundError extends Error {
+  constructor() {
+    super(`Not found`);
+    this.name = "NotFoundError";
+  }
+}
