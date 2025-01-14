@@ -36,4 +36,18 @@ describe("DeleteBankAccount UseCase", () => {
     const response = await sut.execute(bankAccountId, userId);
     expect(response).toBeNull();
   });
+
+  it("Should throws if UserRepository.findById throws ", async () => {
+    mockBankAccountRepository.findById.mockRejectedValueOnce(new Error());
+    const promise = sut.execute(bankAccountId, userId);
+    await expect(promise).rejects.toThrow();
+  });
+
+  it("Should call BankAccountRepository.delete with correct values", async () => {
+    await sut.execute(bankAccountId, userId);
+    expect(mockBankAccountRepository.delete).toHaveBeenCalledWith(
+      bankAccountId,
+      userId
+    );
+  });
 });
