@@ -49,7 +49,7 @@ describe("UpdateBankAccount Controller", () => {
   });
 
   beforeEach(() => {
-    sut = new UpdateBankAccountController();
+    sut = new UpdateBankAccountController(mockUpdateBankAccount);
   });
 
   it("Should return 401 if no user id is provided", async () => {
@@ -148,5 +148,19 @@ describe("UpdateBankAccount Controller", () => {
       },
     });
     expect(httpResponse).toEqual(badRequest(new InvalidParamsError("type")));
+  });
+
+  it("Should call UpdateBankAccount with correct params", async () => {
+    await sut.handle(request);
+    expect(mockUpdateBankAccount.execute).toHaveBeenCalledWith(
+      "bank_account_id",
+      {
+        name: "any_name",
+        initialBalance: 100,
+        color: "any_color",
+        type: "CHECKING",
+        userId: "user_id",
+      }
+    );
   });
 });
