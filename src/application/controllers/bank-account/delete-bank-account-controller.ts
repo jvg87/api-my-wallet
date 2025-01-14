@@ -1,5 +1,9 @@
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
-import { badRequest, unauthorized } from "@/application/helpers";
+import {
+  MissingParamsError,
+  NotFoundError,
+  UnauthorizedError,
+} from "@/application/erros";
+import { badRequest, notFound, unauthorized } from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -19,7 +23,12 @@ export class DeleteBankAccountController implements IController {
     if (!bankAccountId)
       return badRequest(new MissingParamsError("bankAccountId"));
 
-    await this.deleteBankAccount.execute(bankAccountId, userId);
+    const response = await this.deleteBankAccount.execute(
+      bankAccountId,
+      userId
+    );
+
+    if (!response) return notFound(new NotFoundError());
 
     return { statusCode: 1 };
   }
