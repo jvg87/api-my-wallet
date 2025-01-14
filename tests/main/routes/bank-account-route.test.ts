@@ -110,7 +110,7 @@ describe("CreateBankAccount Route", () => {
       expect(body).toEqual({ error: new UnauthorizedError().message });
     });
 
-    it("Should return 200 with list of bank accounts", async () => {
+    it("Should return 200 with update of bank account", async () => {
       const passwordHashed = await hash("any_password", 12);
 
       await prisma.user.create({
@@ -162,6 +162,55 @@ describe("CreateBankAccount Route", () => {
 
       expect(status).toBe(200);
       expect(body.name).toEqual("update");
+    });
+  });
+
+  describe("DELETE /bank-accounts/:bankAccountId", () => {
+    it("Should return 204 if delete bank account", async () => {
+      const passwordHashed = await hash("any_password", 12);
+
+      await prisma.user.create({
+        data: {
+          name: "any_name",
+          email: "any_mail@mail.com",
+          password: passwordHashed,
+        },
+      });
+
+      const response = await request(app).post("/auth").send({
+        email: "any_mail@mail.com",
+        password: "any_password",
+      });
+
+      await request(app)
+        .post("/bank-accounts")
+        .set({
+          authorization: `Bearer ${response.body.token}`,
+        })
+        .send({
+          name: "teste",
+          initialBalance: 1000,
+          color: "#fff",
+          type: "CASH",
+        });
+
+      const list = await request(app)
+        .get("/bank-accounts")
+        .set({
+          authorization: `Bearer ${response.body.token}`,
+        });
+
+      const userId = list.body[0].userId;
+      const bankAccountId = list.body[0].id;
+
+      const { status, body } = await request(app)
+        .delete(`/bank-accounts/${bankAccountId}`)
+        .set({
+          authorization: `Bearer ${response.body.token}`,
+        });
+
+      expect(status).toBe(204);
+      expect(body).toEqual({});
     });
   });
 });
