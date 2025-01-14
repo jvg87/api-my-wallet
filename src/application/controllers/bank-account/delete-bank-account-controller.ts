@@ -6,6 +6,7 @@ import {
 } from "@/application/erros";
 import {
   badRequest,
+  noContent,
   notFound,
   serverError,
   unauthorized,
@@ -37,7 +38,7 @@ export class DeleteBankAccountController implements IController {
 
       if (!response) return notFound(new NotFoundError());
 
-      return { statusCode: 1 };
+      return noContent();
     } catch (error) {
       return serverError(error as ServerError);
     }

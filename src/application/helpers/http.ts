@@ -49,3 +49,7 @@ export const notFound = (error: Error): IHttpResponse => {
     },
   };
 };
+
+export const noContent = (): IHttpResponse => ({
+  statusCode: 204,
+});
