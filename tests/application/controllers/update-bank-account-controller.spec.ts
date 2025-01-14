@@ -8,7 +8,11 @@ import {
 } from "@jest/globals";
 
 import { UpdateBankAccountController } from "@/application/controllers";
-import { MissingParamsError, UnauthorizedError } from "@/application/erros";
+import {
+  InvalidParamsError,
+  MissingParamsError,
+  UnauthorizedError,
+} from "@/application/erros";
 import { badRequest, unauthorized } from "@/application/helpers";
 import { IHttpRequest } from "@/application/protocols";
 import { BankAccountType } from "@/domain/entities";
@@ -94,5 +98,18 @@ describe("UpdateBankAccount Controller", () => {
       userId: "user_id",
     });
     expect(httpResponse).toEqual(badRequest(new MissingParamsError("type")));
+  });
+
+  it("Should return 400 if type provided is not valid", async () => {
+    const httpResponse = await sut.handle({
+      body: {
+        name: "any_name",
+        initialBalance: 100,
+        color: "any_color",
+        type: "any_type",
+      },
+      userId: "user_id",
+    });
+    expect(httpResponse).toEqual(badRequest(new InvalidParamsError("type")));
   });
 });
