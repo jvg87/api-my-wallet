@@ -2,9 +2,15 @@ import {
   InvalidParamsError,
   MissingParamsError,
   NotFoundError,
+  ServerError,
   UnauthorizedError,
 } from "@/application/erros";
-import { badRequest, notFound, unauthorized } from "@/application/helpers";
+import {
+  badRequest,
+  notFound,
+  serverError,
+  unauthorized,
+} from "@/application/helpers";
 import {
   IController,
   IHttpRequest,
@@ -16,46 +22,50 @@ import { IUpdateBankAccount } from "@/domain/protocols";
 export class UpdateBankAccountController implements IController {
   constructor(private readonly updateBankAccount: IUpdateBankAccount) {}
   async handle(request: IHttpRequest): Promise<IHttpResponse> {
-    const userId = request.userId;
+    try {
+      const userId = request.userId;
 
-    if (!userId) return unauthorized(new UnauthorizedError());
+      if (!userId) return unauthorized(new UnauthorizedError());
 
-    const bankAccountId = request.params?.bankAccountId;
+      const bankAccountId = request.params?.bankAccountId;
 
-    if (!bankAccountId)
-      return badRequest(new MissingParamsError("bankAccountId"));
+      if (!bankAccountId)
+        return badRequest(new MissingParamsError("bankAccountId"));
 
-    const { name, initialBalance, color, type } = request.body;
+      const { name, initialBalance, color, type } = request.body;
 
-    const missingParam = this.validateParams({
-      name,
-      initialBalance,
-      color,
-      type,
-    });
+      const missingParam = this.validateParams({
+        name,
+        initialBalance,
+        color,
+        type,
+      });
 
-    if (missingParam) return badRequest(new MissingParamsError(missingParam));
+      if (missingParam) return badRequest(new MissingParamsError(missingParam));
 
-    if (
-      type !== BankAccountType.CASH &&
-      type !== BankAccountType.CHECKING &&
-      type !== BankAccountType.INVESTMENT
-    )
-      return badRequest(new InvalidParamsError("type"));
+      if (
+        type !== BankAccountType.CASH &&
+        type !== BankAccountType.CHECKING &&
+        type !== BankAccountType.INVESTMENT
+      )
+        return badRequest(new InvalidParamsError("type"));
 
-    const update = await this.updateBankAccount.execute(bankAccountId, {
-      color,
-      initialBalance,
-      name,
-      type,
-      userId,
-    });
+      const update = await this.updateBankAccount.execute(bankAccountId, {
+        color,
+        initialBalance,
+        name,
+        type,
+        userId,
+      });
 
-    if (!update) return notFound(new NotFoundError());
+      if (!update) return notFound(new NotFoundError());
 
-    return {
-      statusCode: 1,
-    };
+      return {
+        statusCode: 1,
+      };
+    } catch (error) {
+      return serverError(error as ServerError);
+    }
   }
 
   private validateParams(params: {
