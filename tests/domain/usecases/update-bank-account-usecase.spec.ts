@@ -52,11 +52,23 @@ describe("UpdateBankAccount UseCase", () => {
     expect(response).toBeNull();
   });
 
+  it("Should throws if UserRepository.findById throws ", async () => {
+    mockBankAccountRepository.findById.mockRejectedValueOnce(new Error());
+    const promise = sut.execute(bankAccountId, bankAccountParams);
+    await expect(promise).rejects.toThrow();
+  });
+
   it("Should call BankAccountRepository.update with correct values", async () => {
     await sut.execute(bankAccountId, bankAccountParams);
     expect(mockBankAccountRepository.update).toHaveBeenCalledWith(
       bankAccountId,
       bankAccountParams
     );
+  });
+
+  it("Should throws if UserRepository.update throws ", async () => {
+    mockBankAccountRepository.update.mockRejectedValueOnce(new Error());
+    const promise = sut.execute(bankAccountId, bankAccountParams);
+    await expect(promise).rejects.toThrow();
   });
 });
